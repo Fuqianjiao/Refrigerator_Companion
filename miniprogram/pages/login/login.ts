@@ -1,5 +1,6 @@
 // pages/login/login.ts
 // 登录页面 — 仅保留微信一键登录（手机号注册能力已下线）
+// 注：该注释用于验证提交流程
 
 const app = getApp<IAppOption>()
 
