@@ -1,12 +1,11 @@
 // pages/login/login.ts
-// 登录/注册页面 — 支持微信一键登录、手机号注册、退出/切换账号
+// 登录页面 — 仅保留微信一键登录（手机号注册能力已下线）
 
 const app = getApp<IAppOption>()
 
 Page({
   data: {
     step: 'init',          // 'init' | 'profile'
-    showRegister: false,   // 是否显示注册模式
     tempAvatarUrl: '',     // 用户选择的临时头像
     tempNickName: '',      // 用户输入的临时昵称
     loading: false,
@@ -143,66 +142,6 @@ Page({
   /** 跳过设置头像昵称 */
   onSkipProfile() {
     this._onLoginSuccess(app.globalData.userInfo || {})
-  },
-
-  // ==================== 手机号注册 ====================
-
-  /** 切换到注册模式 */
-  goRegister() {
-    this.setData({ showRegister: true })
-  },
-
-  /** 返回登录 */
-  goBackToLogin() {
-    this.setData({ showRegister: false })
-  },
-
-  /** 手机号注册回调 */
-  async onGetPhoneForRegister(e: any) {
-    console.log('📲 注册 - 手机号回调:', e.detail)
-
-    if (e.detail.errMsg !== 'getPhoneNumber:ok') {
-      wx.showToast({ title: '已取消注册', icon: 'none' })
-      return
-    }
-
-    wx.showLoading({ title: '正在注册...' })
-    
-    try {
-      const res = await wx.cloud.callFunction({
-        name: 'login',
-        data: { 
-          action: 'registerWithPhone',
-          code: e.detail.code,  // 手机号凭证
-        },
-      })
-
-      if (res.result?.success) {
-        // 注册成功 → 保存登录状态，进入设置昵称步骤
-        const regUser = res.result.user || {}
-        
-        // ⭐ 注册成功也要写全局状态（之前漏了）
-        if (regUser.openid) {
-          app.globalData.openid = regUser.openid
-          app.globalData.loggedIn = true
-          app.globalData.userInfo = { ...app.globalData.userInfo, ...regUser }
-          wx.setStorageSync('user_openid', regUser.openid)
-        }
-        
-        wx.hideLoading()
-        this.setData({ 
-          showRegister: false, 
-          step: 'profile',
-        })
-        wx.showToast({ title: '✅ 注册成功，请完善资料', icon: 'none' })
-      } else {
-        throw new Error(res.result?.errMsg || '注册失败')
-      }
-    } catch (err: any) {
-      wx.hideLoading()
-      console.error('❌ 注册失败:', err)
-      wx.showToast({ title: '注册失败', icon: 'none' })
-    }
   },
 
   // ==================== 静默/访客登录 ====================

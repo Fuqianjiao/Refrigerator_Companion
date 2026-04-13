@@ -20,7 +20,7 @@ const _ = db.command
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
   const openid = wxContext.OPENID
-  const { action, nickName, avatarUrl, code } = event
+  const { action, nickName, avatarUrl } = event
 
   console.log(`🔐 [登录] action=${action}, openid=${openid?.substring(0,8)}...`)
 
@@ -31,10 +31,6 @@ exports.main = async (event, context) => {
       
       case 'updateProfile':
         return await updateUserProfile(openid, { nickName, avatarUrl })
-      
-      case 'registerWithPhone':
-        // 手机号注册（code 是 getPhoneNumber 获取的凭证）
-        return await registerWithPhone(openid, code)
 
       default:
         // 兼容无 action 参数的调用（默认静默登录）
@@ -192,101 +188,5 @@ async function updateUserProfile(openid, profile) {
       avatarUrl: user.avatarUrl || '',
     },
     errMsg: '',
-  }
-}
-
-/**
- * 手机号注册
- * 使用微信 getPhoneNumber 获取的 code 解密手机号
- */
-async function registerWithPhone(openid, code) {
-  try {
-    // 调用微信接口解密手机号
-    const phoneRes = await cloud.openapi.phonenumber.getPhoneNumber({
-      code: code,
-    })
-    
-    const phoneNumber = phoneRes.phoneInfo?.phoneNumber
-    
-    if (!phoneNumber) {
-      throw new Error('获取手机号失败')
-    }
-
-    console.log(`📲 [手机号注册] phone=${phoneNumber}`)
-
-    // 检查该手机号是否已注册（通过手机号字段查找）
-    const existingByPhone = await db.collection('users')
-      .where({ phoneNumber })
-      .limit(1)
-      .get()
-
-    if (existingByPhone.data && existingByPhone.data.length > 0) {
-      const existUser = existingByPhone.data[0]
-      if (existUser._openid !== openid) {
-        // 手机号已被其他账号绑定
-        return {
-          success: false,
-          errMsg: '该手机号已被其他账号使用',
-          needSwitchAccount: true,
-        }
-      }
-      // 同一个 openid 绑定同一手机号，直接返回成功
-      return {
-        success: true,
-        isNewUser: false,
-        user: { openid, phoneNumber },
-        errMsg: '',
-      }
-    }
-
-    // 更新/创建用户记录，绑定手机号
-    const now = new Date()
-    const existingUser = await db.collection('users')
-      .where({ _openid: openid })
-      .limit(1)
-      .get()
-
-    if (existingUser.data && existingUser.data.length > 0) {
-      // 已有记录 → 补充手机号
-      await db.collection('users').doc(existingUser.data[0]._id).update({
-        data: { 
-          phoneNumber,
-          updatedAt: now,
-        }
-      })
-    } else {
-      // 全新用户 → 创建
-      await db.collection('users').add({
-        data: {
-          _openid: openid,
-          phoneNumber,
-          nickName: '',
-          avatarUrl: '',
-          scenario: 'single',
-          notifyEnabled: false,
-          notifyDaysBefore: 3,
-          loginCount: 1,
-          lastActiveAt: now,
-          createdAt: now,
-        }
-      })
-    }
-
-    return {
-      success: true,
-      isNewUser: !existingUser.data?.length,
-      user: { openid, phoneNumber },
-      errMsg: '',
-    }
-  } catch (err) {
-    console.error('❌ 手机号注册失败:', err)
-    // 如果 openapi 不可用，仍然允许注册成功（降级处理）
-    return {
-      success: true,
-      isNewUser: true,
-      user: { openid, phoneNumber: '' },
-      warning: '手机号绑定未完成，可在设置中补充',
-      errMsg: '',
-    }
   }
 }
