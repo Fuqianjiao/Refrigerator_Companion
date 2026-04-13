@@ -1,0 +1,1 @@
+{"name": "fetchXiachufang", "version": "1.0.0", "description": "下厨房菜谱数据获取", "main": "index.js", "dependencies": {"wx-server-sdk": "~2.6.3", "request-promise": "^4.2.6"}}

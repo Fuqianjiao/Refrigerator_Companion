@@ -1,0 +1,13 @@
+<!-- components/scene-switcher/scene-switcher.wxml -->
+<view class="scene-switcher">
+  <view 
+    wx:for="{{scenes}}" 
+    wx:key="value"
+    class="scene-item {{current === item.value ? 'scene-item--active' : ''}}"
+    data-value="{{item.value}}"
+    bindtap="onSwitch"
+  >
+    <text class="scene-icon">{{current === item.value ? item.iconActive : item.icon}}</text>
+    <text class="scene-label">{{item.label}}</text>
+  </view>
+</view>

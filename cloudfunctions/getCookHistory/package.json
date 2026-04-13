@@ -1,0 +1,1 @@
+{"name": "getCookHistory", "version": "1.0.0", "description": "获取做菜历史记录 + 统计数据", "main": "index.js", "dependencies": {"wx-server-sdk": "~2.6.3"}}

@@ -1,0 +1,53 @@
+<!-- components/food-card/food-card.wxml -->
+<view 
+  class="food-card {{expired ? 'food-card--expired' : ''}} {{expiring ? 'food-card--expiring' : ''}}"
+  bindtap="onTap"
+>
+  <!-- 左侧颜色条 -->
+  <view class="food-card__color-bar" style="background: {{categoryColor}}"></view>
+  
+  <!-- 主要内容 -->
+  <view class="food-card__content">
+    <!-- 上排：名称 + 状态标签 -->
+    <view class="food-card__header">
+      <text class="food-card__name">{{name}}</text>
+      <view class="tag tag--{{statusClass}}" wx:if="{{statusText}}">
+        <text>{{statusText}}</text>
+      </view>
+    </view>
+
+    <!-- 下排：信息 -->
+    <view class="food-card__meta">
+      <!-- 品牌信息 -->
+      <text class="food-card__brand" wx:if="{{brand}}">{{brand}}</text>
+      
+      <!-- 数量 -->
+      <view class="food-card__quantity" wx:if="{{quantity}}">
+        <text class="food-card__qty-num">{{quantity}}</text>
+        <text class="food-card__qty-unit">{{unit || '个'}}</text>
+      </view>
+
+      <!-- 位置 -->
+      <view class="food-card__location" wx:if="{{locationText}}">
+        <text class="food-card__location-icon">📍</text>
+        <text>{{locationText}}</text>
+      </view>
+    </view>
+
+    <!-- 底部：保质期进度条 -->
+    <view class="food-card__expiry" wx:if="{{expiryDate}}">
+      <view class="food-card__expiry-bar">
+        <view 
+          class="food-card__expiry-fill food-card__expiry-fill--{{expiryLevel}}"
+          style="width: {{expiryPercent}}%"
+        ></view>
+      </view>
+      <text class="food-card__expiry-text {{expiryTextColor}}">{{expiryText}}</text>
+    </view>
+  </view>
+
+  <!-- 右侧箭头 -->
+  <view class="food-card__arrow" wx:if="{{showArrow}}">
+    <text>›</text>
+  </view>
+</view>

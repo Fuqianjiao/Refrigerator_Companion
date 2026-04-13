@@ -1,0 +1,326 @@
+/* FridgeMate 全局样式 - 温馨可爱暖色系（WXSS 兼容版） */
+@import './variables.wxss';
+
+/* ==================== 全局重置 ==================== */
+
+page {
+  --color-primary: #FF6A88;
+  --color-primary-light: #FF9A8B;
+  --color-primary-dark: #E84D6B;
+  --color-sky: #74C0FC;
+  --color-lemon: #FFE066;
+  --color-lavender: #B692E4;
+  --color-coral: #FF9A8B;
+
+  background-color: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==================== 通用容器 ==================== */
+
+.container {
+  padding: var(--page-padding);
+  padding-bottom: calc(var(--tabbar-height) + var(--spacing-xl));
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.page-container {
+  padding: var(--page-padding);
+  padding-bottom: calc(var(--tabbar-height) + var(--spacing-xl));
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* ==================== 卡片系统 ==================== */
+
+.card {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--card-margin-bottom);
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-simple {
+  background: var(--color-card);
+  border-radius: var(--radius-card);
+  padding: var(--spacing-md);
+  margin-bottom: var(--card-margin-bottom);
+  box-shadow: var(--shadow-card);
+}
+
+/* ==================== 按钮系统 ==================== */
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 40rpx;
+  border-radius: var(--radius-xl);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+  border: none;
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--ease-bounce);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #FF9A8B, #FF6A88);
+  color: #fff;
+  box-shadow: 0 6rpx 20rpx rgba(255,106,136,0.35);
+}
+
+.btn-secondary {
+  background: rgba(255, 106, 136, 0.1);
+  color: var(--color-primary-dark);
+}
+
+.btn-block { width: 100%; }
+
+/* ==================== 标签/Tag ==================== */
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 6rpx 18rpx;
+  border-radius: var(--radius-round);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+.tag-green { background: rgba(81,207,102,0.12); color: #2B8A3E; }
+.tag-blue { background: rgba(116,192,252,0.12); color: #1971C2; }
+.tag-yellow { background: rgba(255,224,102,0.12); color: #E67700; }
+.tag-red { background: rgba(255,107,107,0.10); color: #C92A2A; }
+
+/* ==================== 文字样式 ==================== */
+
+.text-primary { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-hint { color: var(--color-text-hint); }
+.text-success { color: var(--color-success); }
+.text-warning { color: var(--color-warning); }
+.text-danger { color: var(--color-danger); }
+
+.text-center { text-align: center; }
+
+.font-bold { font-weight: var(--font-weight-bold); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+
+/* ==================== 布局工具类 ==================== */
+
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.flex-1 { flex: 1; }
+.flex-shrink-0 { flex-shrink: 0; }
+
+.gap-sm { gap: var(--spacing-sm); }
+.gap-md { gap: var(--spacing-md); }
+
+.mt-xs { margin-top: var(--spacing-xs); }
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.ml-sm { margin-left: var(--spacing-sm); }
+.p-sm { padding: var(--spacing-sm); }
+.p-md { padding: var(--spacing-md); }
+
+/* ==================== 表单元素 ==================== */
+
+.input {
+  height: 88rpx;
+  padding: 0 28rpx;
+  background: #FAFBFC;
+  border: 2rpx solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  transition: all var(--duration-fast);
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+  background: #fff;
+  box-shadow: 0 0 0 4rpx rgba(255,106,136,0.1);
+}
+
+.textarea {
+  min-height: 180rpx;
+  padding: 24rpx 28rpx;
+  background: #FAFBFC;
+  border: 2rpx solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+}
+
+/* ==================== 空状态 ==================== */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx var(--spacing-xl);
+  color: var(--color-text-hint);
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: var(--spacing-lg);
+  animation: float 3s ease-in-out infinite;
+}
+
+.empty-text {
+  font-size: var(--font-size-base);
+  margin-bottom: var(--spacing-md);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12rpx); }
+}
+
+/* ==================== 加载状态 ==================== */
+
+.loading-spinner {
+  width: 56rpx;
+  height: 56rpx;
+  border: 4rpx solid rgba(255,106,136,0.15);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ==================== 分割线 ==================== */
+
+.divider {
+  height: 1rpx;
+  background: var(--color-divider);
+  margin: var(--spacing-md) 0;
+}
+
+/* ==================== 头像 ==================== */
+
+.avatar { border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+.avatar-sm { width: 64rpx; height: 64rpx; }
+.avatar-md { width: 96rpx; height: 96rpx; }
+.avatar-lg { width: 128rpx; height: 128rpx; }
+
+/* ==================== 徽标/角标 ==================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32rpx;
+  height: 32rpx;
+  padding: 0 8rpx;
+  background: var(--color-danger);
+  color: #fff;
+  font-size: 20rpx;
+  border-radius: var(--radius-round);
+}
+
+/* ==================== 列表基础样式 ==================== */
+
+.list-item {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-md) 0;
+  border-bottom: 1rpx solid var(--color-divider);
+}
+
+.list-item:last-child { border-bottom: none; }
+.list-item:active { background: rgba(255,106,136,0.04); }
+
+/* ==================== 页面过渡动画 ==================== */
+
+.page-enter { animation: pageSlideUp 0.35s ease-out both; }
+
+@keyframes pageSlideUp {
+  from { opacity: 0; transform: translateY(40rpx); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 元素交错入场 — 使用 view 而非通配符 */
+.stagger-in view,
+.stagger-in text,
+.stagger-in image {
+  animation: staggerFadeIn 0.4s ease-out both;
+}
+.stagger-in view:nth-child(1),
+.stagger-in text:nth-child(1),
+.stagger-in image:nth-child(1) { animation-delay: 0.03s; }
+.stagger-in view:nth-child(2),
+.stagger-in text:nth-child(2),
+.stagger-in image:nth-child(2) { animation-delay: 0.06s; }
+.stagger-in view:nth-child(3),
+.stagger-in text:nth-child(3),
+.stagger-in image:nth-child(3) { animation-delay: 0.09s; }
+.stagger-in view:nth-child(4),
+.stagger-in text:nth-child(4),
+.stagger-in image:nth-child(4) { animation-delay: 0.12s; }
+.stagger-in view:nth-child(5),
+.stagger-in text:nth-child(5),
+.stagger-in image:nth-child(5) { animation-delay: 0.15s; }
+
+@keyframes staggerFadeIn {
+  from { opacity: 0; transform: translateY(16rpx) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ==================== 安全区域 ==================== */
+
+.safe-area-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.safe-area-top { padding-top: env(safe-area-inset-top); }
+
+/* ==================== 隐藏滚动条 ==================== */
+::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+/* ==================== 趣味装饰动效 ==================== */
+
+.bubble-float { animation: bubbleFloat 4s ease-in-out infinite; }
+
+@keyframes bubbleFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  33% { transform: translateY(-8rpx) scale(1.02); }
+  66% { transform: translateY(4rpx) scale(0.98); }
+}
+
+.gentle-wiggle { animation: gentleWiggle 3s ease-in-out infinite; }
+
+@keyframes gentleWiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(1.5deg); }
+  75% { transform: rotate(-1.5deg); }
+}
+
+.pulse-gentle { animation: pulseGentle 2.5s ease-in-out infinite; }
+
+@keyframes pulseGentle {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.04); opacity: 0.85; }
+}

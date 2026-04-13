@@ -1,0 +1,130 @@
+<!-- pages/food-detail/food-detail.wxml -->
+<view class="page-container detail-page">
+
+  <!-- === Hero 卡片：名称 + 过期角标 + 分类标签 + 基础信息 === -->
+  <view class="hero-card animate-fade-in-up">
+    <!-- 名称行：左侧名称，右侧过期角标 -->
+    <view class="hero-top">
+      <text class="food-name">{{name || '未知食材'}}</text>
+      <view class="expired-badge" wx:if="{{expiryLevel === 'expired'}}">
+        <view class="expired-dot"></view>
+        <text class="expired-text">已过期 {{daysRemaining}} 天</text>
+      </view>
+      <view class="expiring-badge" wx:elif="{{expiryLevel === 'expiring'}}">
+        <view class="expiring-dot"></view>
+        <text class="expiring-text">即将过期</text>
+      </view>
+    </view>
+
+    <!-- 分类标签 -->
+    <view class="category-tag">
+      <text>{{categoryIcon}} {{categoryLabel}}</text>
+    </view>
+
+    <!-- 信息行：品牌 / 数量 / 位置（带分隔线） -->
+    <view class="info-row">
+      <view class="info-item" wx:if="{{brand}}">
+        <text class="info-label">品牌</text>
+        <text class="info-value">{{brand}}</text>
+      </view>
+      <view class="info-divider" wx:if="{{brand}}"></view>
+
+      <view class="info-item">
+        <text class="info-label">数量</text>
+        <text class="info-value">{{quantity}} {{unit || '个'}}</text>
+      </view>
+      <view class="info-divider"></view>
+
+      <view class="info-item" wx:if="{{locationLabel}}">
+        <text class="info-label">位置</text>
+        <text class="info-value">{{locationIcon}} {{locationLabel}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- === 保质期区（时间轴 + 进度条）=== -->
+  <view class="card section-card animate-fade-in-up" wx:if="{{expiryDate}}" style="animation-delay: 0.08s">
+    <view class="section-title">保质期</view>
+
+    <!-- 时间轴（左对齐式） -->
+    <view class="timeline">
+      <!-- 渐变竖线背景 -->
+      <view class="timeline-line"></view>
+
+      <!-- 生产日期 -->
+      <view class="timeline-item">
+        <view class="tl-dot tl-dot--green"></view>
+        <view class="tl-content">
+          <text class="tl-label">生产日期</text>
+          <text class="tl-date">{{productionDate || '未设置'}}</text>
+        </view>
+      </view>
+
+      <!-- 过期日期 -->
+      <view class="timeline-item">
+        <view class="tl-dot tl-dot--{{expiryLevel === 'expired' ? 'red' : expiryLevel === 'expiring' ? 'orange' : 'gray'}}"></view>
+        <view class="tl-content">
+          <text class="tl-label">过期日期</text>
+          <text class="tl-date tl-date--{{expiryLevel}}">{{expiryDate}}</text>
+        </view>
+      </view>
+
+      <!-- 今天标记（仅过期/临期时显示在时间轴上） -->
+      <view class="timeline-item" wx:if="{{showTodayMarker && (expiryLevel === 'expired' || expiryLevel === 'expiring')}}">
+        <view class="tl-dot tl-dot--today"></view>
+        <view class="tl-content">
+          <text class="tl-label">今天</text>
+          <view class="tl-today-badge">
+            <text wx:if="{{expiryLevel === 'expired'}}">已超期 {{daysRemaining}} 天</text>
+            <text wx:else>还剩 {{daysRemaining}} 天</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部进度条 -->
+    <view class="progress-bar" wx:if="{{shelfLifeDays > 0}}">
+      <view
+        class="progress-fill progress-fill--{{expiryLevel}}"
+        style="width: {{expiryProgress}}%"
+      ></view>
+    </view>
+    <view class="progress-label" wx:if="{{shelfLifeDays > 0}}">
+      <text>{{shelfLifeDays}}天保质期</text>
+      <text wx:if="{{expiryLevel === 'expired'}}">已过期</text>
+      <text wx:elif="{{expiryLevel === 'expiring'}}">即将过期</text>
+      <text wx:else>新鲜</text>
+    </view>
+  </view>
+
+  <!-- === AI 处理建议（暖色调卡片）=== -->
+  <view class="ai-section animate-fade-in-up" wx:if="{{aiAdvice}}" style="animation-delay: 0.14s">
+    <view class="ai-header">
+      <view class="ai-icon">
+        <text class="ai-icon-inner">✦</text>
+      </view>
+      <text class="ai-title">AI 处理建议</text>
+    </view>
+    <text class="ai-body">{{aiAdvice}}</text>
+    <view class="ai-tip" wx:if="{{expiryLevel === 'expired'}}">
+      <text class="ai-tip-icon">⏰</text>
+      <text>建议 24 小时内处理，冷藏不可再延期</text>
+    </view>
+  </view>
+
+  <!-- === 备注 === -->
+  <view class="card note-card animate-fade-in-up" style="animation-delay: 0.2s" wx:if="{{note}}">
+    <view class="section-title"><text>📝 备注</text></view>
+    <text class="note-content">{{note}}</text>
+  </view>
+
+  <!-- === 底部操作按钮（黑主色+白描边辅色）=== -->
+  <view class="bottom-actions safe-area-bottom">
+    <button class="btn-primary" bindtap="goRecipes" hover-class="hover-scale">
+      <text>🍳 查看可用菜谱</text>
+    </button>
+    <button class="btn-secondary" catchtap="markHandled" hover-class="hover-scale-light" wx:if="{{!_id.startsWith('demo_')}}">
+      <text>✅ 标记已处理</text>
+    </button>
+  </view>
+</view>

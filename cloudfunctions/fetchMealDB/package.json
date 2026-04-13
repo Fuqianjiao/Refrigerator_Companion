@@ -1,0 +1,1 @@
+{"name": "fetchMealDB", "version": "1.0.0", "description": "TheMealDB API 代理 - 获取海外菜谱数据", "main": "index.js", "dependencies": {"wx-server-sdk": "~2.6.3"}, "scripts": {"test": "echo \"Error: no test specified\" && exit 1"}, "author": "", "license": "ISC"}

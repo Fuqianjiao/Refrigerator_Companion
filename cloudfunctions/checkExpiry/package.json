@@ -1,0 +1,1 @@
+{"name": "checkExpiry", "version": "1.0.0", "description": "定时检查食材保质期并发送提醒", "main": "index.js", "scripts": {"test": "echo \"Error: no test specified\" && exit 1"}, "dependencies": {"wx-server-sdk": "~2.6.3"}}

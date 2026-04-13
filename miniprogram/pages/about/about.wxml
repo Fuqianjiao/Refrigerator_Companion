@@ -1,0 +1,57 @@
+<!-- pages/about/about.wxml -->
+<view class="about-page">
+
+  <!-- === App 信息卡片 === -->
+  <view class="card about-card">
+    <view class="about-header">
+      <image class="about-icon" src="/images/tab/fridge-active.png" mode="aspectFit" />
+      <text class="about-name">冰箱管家</text>
+      <text class="about-version">v2.0.0</text>
+    </view>
+
+    <!-- 功能介绍 -->
+    <view class="feature-list">
+      <view class="feature-item">
+        <text class="feature-emoji">🧊</text>
+        <text class="feature-text">智能记录冰箱食材，告别过期浪费</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-emoji">🍳</text>
+        <text class="feature-text">根据现有食材推荐今天吃什么</text>
+      </view>
+      <view class="feature-item">
+        <text class="feature-emoji">👨‍👩‍👧</text>
+        <text class="feature-text">支持家庭共享，一起管理冰箱</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- === 功能入口列表 === -->
+  <view class="card about-menu">
+    <view class="menu-row" catchtap="goPrivacy">
+      <text class="menu-label">隐私政策</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-row" catchtap="goAgreement">
+      <text class="menu-label">用户协议</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-row" catchtap="checkUpdate">
+      <text class="menu-label">检查更新</text>
+      <text class="menu-value {{updateStatus === 'latest' ? 'menu-value--ok' : ''}}">{{updateText}}</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-row menu-row--last" catchtap="clearCache">
+      <text class="menu-label">清除缓存</text>
+      <text class="menu-value menu-value--cache">{{cacheSizeText}}</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- === 底部版权 === -->
+  <view class="about-footer">
+    <text class="footer-love">Made with ❤️ by 新时代霹雳娇羊</text>
+    <text class="footer-copy">© 2026  ·  联系我们</text>
+  </view>
+
+</view>

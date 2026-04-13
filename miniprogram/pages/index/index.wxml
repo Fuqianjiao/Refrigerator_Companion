@@ -1,0 +1,189 @@
+<!-- pages/index/index.wxml -->
+<view class="page-container index-page">
+  <!-- === 顶部问候区（带用户头像入口）=== -->
+  <view class="greeting-section">
+    <view class="greeting-text">
+      <text class="greeting-time">{{displayGreeting}}</text>
+      <text class="greeting-sub">看看冰箱里有什么吧～</text>
+    </view>
+    <!-- 头像：点击跳转"我的"页面编辑资料 -->
+    <view class="greeting-avatar {{isLoggedIn ? 'greeting-avatar--logged' : ''}}" bindtap="goProfile">
+      <image
+        wx:if="{{userInfo.avatarUrl}}"
+        class="avatar-img"
+        src="{{userInfo.avatarUrl}}"
+        mode="aspectFill"
+      />
+      <!-- 未登录/无头像时：显示默认 emoji -->
+      <view wx:else class="avatar-img avatar-img--default">
+        <text class="avatar-emoji">🧊</text>
+      </view>
+      <!-- 登录状态小圆点 -->
+      <view wx:if="{{isLoggedIn}}" class="avatar-online-dot"></view>
+    </view>
+  </view>
+
+  <!-- === 冰箱总览卡片 === -->
+  <view class="overview-card animate-scale-in">
+    <!-- 装饰性顶部渐变条 -->
+    <view class="overview-card__gradient"></view>
+    
+    <view class="overview-header">
+      <text class="overview-title">🧊 我的冰箱</text>
+      <view class="overview-refresh" bindtap="refreshData">
+        <text>🔄</text>
+      </view>
+    </view>
+
+    <!-- 统计数字网格 -->
+    <view class="stats-grid">
+      <view class="stat-item stat-item--primary">
+        <text class="stat-num">{{stats.total}}</text>
+        <text class="stat-label">种食材</text>
+      </view>
+      <view class="stat-item {{stats.expiring > 0 ? 'stat-item--warning' : ''}}">
+        <text class="stat-num">{{stats.expiring}}</text>
+        <text class="stat-label">临期</text>
+      </view>
+      <view class="stat-item {{stats.expired > 0 ? 'stat-item--danger' : ''}}">
+        <text class="stat-num">{{stats.expired}}</text>
+        <text class="stat-label">过期</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-num">{{stats.canCookRecipes || '?'}}</text>
+        <text class="stat-label">可做菜</text>
+      </view>
+    </view>
+
+    <!-- 冰箱填充度进度 -->
+    <view class="fridge-level" wx:if="{{stats.total > 0}}">
+      <view class="fridge-level__bar">
+        <view 
+          class="fridge-level__fill"
+          style="width: {{fillLevel}}%"
+        ></view>
+      </view>
+      <text class="fridge-level__text">冰箱 {{stats.total}} 种食材，{{stats.total < 5 ? '该补货啦~' : stats.total > 20 ? '满满当当！' : '刚刚好 🎉'}}</text>
+    </view>
+
+    <!-- 空状态提示 -->
+    <view class="overview-empty" wx:if="{{stats.total === 0 && !loading}}">
+      <empty-state
+        icon="🧊"
+        title="冰箱还是空的"
+        desc="快去添加你喜欢的食材吧！"
+        actionText="添加食材"
+        bind:action="goAddFood"
+      />
+    </view>
+  </view>
+
+  <!-- === 临期提醒横幅 === -->
+  <view 
+    class="expiry-banner animate-pulse" 
+    wx:if="{{expiringItems.length > 0}}"
+    bindtap="goFridgeDetail"
+  >
+    <view class="expiry-banner__icon">⏰</view>
+    <scroll-view scroll-x class="expiry-banner__content" enhanced show-scrollbar="{{false}}">
+      <view class="expiry-banner__items">
+        <view 
+          class="expiry-item" 
+          wx:for="{{expiringItems}}" 
+          wx:key="_id"
+          data-id="{{item._id}}"
+          catchtap="goFoodDetail"
+        >
+          <text class="expiry-item__name">{{item.name}}</text>
+          <text class="expiry-item__time expiry-item__time--{{item.status}}">{{item.expiryText}}</text>
+        </view>
+      </view>
+    </scroll-view>
+    <text class="expiry-banner__arrow">›</text>
+  </view>
+
+  <!-- === 今日推荐菜谱 === -->
+  <view class="section" wx:if="{{todayRecipes.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">🍳 今日推荐</text>
+      <view class="section-more" bindtap="goRecipes">
+        <text>查看更多</text>
+        <text>›</text>
+      </view>
+    </view>
+    
+    <scroll-view scroll-x class="recipes-scroll" enhanced show-scrollbar="{{false}}">
+      <view class="recipes-list">
+        <recipe-card 
+          wx:for="{{todayRecipes}}" 
+          wx:key="_id"
+          name="{{item.name}}"
+          image="{{item.image}}"
+          description="{{item.description}}"
+          cook-time="{{item.cookTime}}"
+          difficulty="{{item.difficulty}}"
+          tags="{{item.tags}}"
+          match-rate="{{item.matchRate}}"
+          can-cook="{{item.canCook}}"
+          scenario="{{scenario}}"
+          servings="{{item.servings}}"
+          missing-ingredients="{{item.missingIngredients}}"
+          bind:tap="onRecipeTap"
+          data-id="{{item._id}}"
+        />
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- === 快捷操作入口 === -->
+  <view class="quick-actions">
+    <view 
+      class="quick-action" 
+      wx:for="{{quickActions}}" 
+      wx:key="name"
+      data-path="{{item.path}}"
+      bindtap="navigateTo"
+    >
+      <view class="quick-action__icon-wrap" style="background: {{item.bgColor}}">
+        <text class="quick-action__icon">{{item.icon}}</text>
+      </view>
+      <text class="quick-action__label">{{item.label}}</text>
+    </view>
+  </view>
+
+  <!-- === 最近添加的食材 === -->
+  <view class="section" wx:if="{{recentItems.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">✨ 刚刚添加</text>
+    </view>
+    <view class="recent-list">
+      <food-card
+        wx:for="{{recentItems}}"
+        wx:key="_id"
+        name="{{item.name}}"
+        brand="{{item.brand}}"
+        category="{{item.category}}"
+        category-color="{{item.categoryColor}}"
+        quantity="{{item.quantity}}"
+        unit="{{item.unit}}"
+        location="{{item.location}}"
+        expiry-date="{{item.expiryDate}}"
+        production-date="{{item.productionDate}}"
+        shelf-life-days="{{item.shelfLifeDays}}"
+        status="{{item.status}}"
+        show-arrow="{{true}}"
+        bind:tap="goFoodDetail"
+        data-id="{{item._id}}"
+      />
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-spinner" wx:if="{{loading}}">
+    <view class="loading-dots">
+      <text class="dot dot-1">●</text>
+      <text class="dot dot-2">●</text>
+      <text class="dot dot-3">●</text>
+    </view>
+  </view>
+</view>

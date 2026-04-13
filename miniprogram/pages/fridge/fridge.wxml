@@ -1,0 +1,92 @@
+<!-- pages/fridge/fridge.wxml -->
+<view class="page-container fridge-page">
+  <!-- === 搜索栏 === -->
+  <view class="search-bar">
+    <view class="search-input">
+      <text class="search-icon">🔍</text>
+      <input 
+        class="search-field" 
+        placeholder="搜索食材..." 
+        value="{{searchKey}}"
+        bindinput="onSearchInput"
+        confirm-type="search"
+        bindconfirm="onSearch"
+        placeholder-class="search-placeholder"
+      />
+      <view class="search-clear" wx:if="{{searchKey}}" bindtap="clearSearch">
+        <text>✕</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- === 分类标签栏 === -->
+  <scroll-view scroll-x class="category-tabs" enhanced show-scrollbar="{{false}}">
+    <view 
+      wx:for="{{categories}}" 
+      wx:key="value"
+      class="category-tab {{currentCategory === item.value ? 'category-tab--active' : ''}}"
+      data-value="{{item.value}}"
+      bindtap="onCategoryChange"
+    >
+      <text class="tab-icon">{{item.icon}}</text>
+      <text class="tab-label">{{item.label}}</text>
+      <view class="tab-count" wx:if="{{item.count > 0}}">
+        <text>{{item.count}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- === 筛选条 === -->
+  <view class="filter-bar">
+    <view class="filter-item" wx:if="{{showExpiryFilter}}" bindtap="toggleExpiryFilter">
+      <view class="filter-dot filter-dot--{{expiryFilter}}"></view>
+      <text>只看临期</text>
+    </view>
+    <view class="sort-btn" bindtap="toggleSort">
+      <text>排序：{{sortLabels[currentSort]}}</text>
+      <text class="sort-arrow {{sortAsc ? 'sort-asc' : ''}}">↓</text>
+    </view>
+    <text class="food-count">{{filteredItems.length}} 种</text>
+  </view>
+
+  <!-- === 食材列表 === -->
+  <view class="food-list" wx:if="{{filteredItems.length > 0}}">
+    <food-card
+      wx:for="{{filteredItems}}"
+      wx:key="_id"
+      name="{{item.name}}"
+      brand="{{item.brand}}"
+      category="{{item.category}}"
+      category-color="{{item.categoryColor}}"
+      quantity="{{item.quantity}}"
+      unit="{{item.unit}}"
+      location="{{item.location}}"
+      expiry-date="{{item.expiryDate}}"
+      production-date="{{item.productionDate}}"
+      shelf-life-days="{{item.shelfLifeDays}}"
+      status="{{item.status}}"
+      show-arrow="{{true}}"
+      data-id="{{item._id}}"
+      bind:tap="goDetail"
+    />
+  </view>
+
+  <!-- 空状态 -->
+  <empty-state
+    wx:elif="{{!loading}}"
+    icon="🧊"
+    title="{{searchKey ? '没找到相关食材' : '冰箱空空的~'}}"
+    desc="{{searchKey ? '换个关键词试试吧' : '点击下方按钮添加你喜欢的食材！'}}"
+    action-text="添加食材"
+    bind:action="goAddFood"
+  />
+
+  <!-- 加载中 -->
+  <view class="loading-spinner" wx:if="{{loading}}">
+    <view class="loading-dots">
+      <text class="dot dot-1">●</text>
+      <text class="dot dot-2">●</text>
+      <text class="dot dot-3">●</text>
+    </view>
+  </view>
+</view>

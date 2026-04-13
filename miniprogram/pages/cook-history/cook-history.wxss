@@ -1,0 +1,159 @@
+/* pages/cook-history/cook-history.wxss */
+
+.cook-history-page {
+  padding: 0 24rpx 40rpx;
+}
+
+/* === 统计卡片行 === */
+.stats-row {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.stat-card {
+  flex: 1;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.stat-card--primary { border-top: 6rpx solid #FF6A88; }
+.stat-card--money { border-top: 6rpx solid #51CF66; }
+.stat-card--favorite { border-top: 6rpx solid #FFB84D; }
+
+.stat-card__num {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+.stat-card__num--money {
+  color: #51CF66;
+  font-size: 30rpx;
+}
+.stat-card__name {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #FF9A8B;
+}
+
+.stat-card__label {
+  font-size: 22rpx;
+  color: #999;
+  margin-top: 4rpx;
+}
+
+/* === 月份 Tab === */
+.month-tabs {
+  white-space: nowrap;
+  margin-bottom: 20rpx;
+}
+
+.month-tabs__inner {
+  display: inline-flex;
+  gap: 8rpx;
+}
+
+.month-tab {
+  padding: 14rpx 28rpx;
+  border-radius: 32rpx;
+  font-size: 26rpx;
+  color: #888;
+  background: #f5f5f5;
+}
+.month-tab--active {
+  background: #FF6A88;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* === 加载状态 === */
+.cook-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+  gap: 16rpx;
+  color: #bbb;
+  font-size: 26rpx;
+}
+
+/* === 历史记录列表 === */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.04);
+  gap: 16rpx;
+}
+
+.history-item__img {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 12rpx;
+  flex-shrink: 0;
+  background: #f5f5f5;
+}
+
+.history-item__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.history-item__header {
+  margin-bottom: 6rpx;
+}
+
+.history-item__name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-item__time {
+  font-size: 22rpx;
+  color: #bbb;
+  margin-left: 4rpx;
+}
+
+.history-item__ingredients {
+  font-size: 23rpx;
+  color: #999;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.history-item__ing-label {
+  color: #FF6A88;
+}
+
+.history-item__action {
+  flex-shrink: 0;
+}
+
+.history-item__btn {
+  display: inline-block;
+  padding: 10rpx 20rpx;
+  border-radius: 24rpx;
+  font-size: 23rpx;
+  color: #FF6A88;
+  border: 2rpx solid #FFD4DE;
+  font-weight: 500;
+}

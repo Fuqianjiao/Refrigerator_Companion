@@ -1,0 +1,107 @@
+<!-- pages/login/login.wxml -->
+<view class="login-page">
+  <!-- 顶部装饰 -->
+  <view class="login-header">
+    <view class="login-logo-wrap">
+      <text class="login-logo">🧊</text>
+    </view>
+    <text class="login-app-name">冰箱伴侣</text>
+    <text class="login-app-desc">智能管理你的每一份食材</text>
+  </view>
+
+  <!-- 登录/注册卡片 -->
+  <view class="login-card">
+    <!-- 已有账号：微信一键登录 -->
+    <view wx:if="{{!showRegister}}">
+      <view class="login-title-area">
+        <text class="login-title">欢迎回来</text>
+        <text class="login-subtitle">登录后可同步数据，换手机不丢失</text>
+      </view>
+
+      <!-- 微信头像+昵称（登录时一起设置） -->
+      <view class="profile-setup" wx:if="{{step === 'profile'}}">
+        <!-- 头像选择 -->
+        <button
+          class="avatar-btn"
+          open-type="chooseAvatar"
+          bind:chooseavatar="onChooseAvatar"
+        >
+          <image wx:if="{{tempAvatarUrl}}" class="avatar-preview" src="{{tempAvatarUrl}}" mode="aspectFill"/>
+          <view wx:else class="avatar-placeholder"><text>📷</text></view>
+          <text class="avatar-tip">点击设置头像</text>
+        </button>
+
+        <!-- 昵称输入（使用微信昵称键盘） -->
+        <view class="nick-row">
+          <input
+            class="nick-input"
+            type="nickname"
+            placeholder="请输入你的昵称"
+            value="{{tempNickName}}"
+            bindinput="onNickInput"
+            bindconfirm="onConfirmLogin"
+          />
+        </view>
+
+        <!-- 确认登录按钮 -->
+        <view class="confirm-row">
+          <text class="skip-link" bindtap="onSkipProfile">跳过，直接进入</text>
+          <button class="confirm-login-btn" bindtap="onConfirmLogin">确认并登录</button>
+        </view>
+      </view>
+
+      <!-- 微信快捷登录按钮（初始态） -->
+      <button
+        wx:else
+        class="login-btn"
+        bindtap="startWechatLogin"
+      >
+        <text class="login-btn-icon">📱</text>
+        <text class="login-btn-text">微信一键登录</text>
+      </button>
+
+      <!-- 分割线 + 其他选项 -->
+      <view class="divider-row">
+        <view class="divider-line"></view>
+        <text class="divider-text">或</text>
+        <view class="divider-line"></view>
+      </view>
+
+      <!-- 手机号注册入口 -->
+      <view class="other-actions">
+        <button class="link-btn" bindtap="goRegister">📝 手机号注册新账号</button>
+      </view>
+
+      <!-- 静默登录入口 -->
+      <view class="silent-entry">
+        <text class="silent-link" bindtap="onSilentLogin">以访客身份浏览 →</text>
+      </view>
+    </view>
+
+    <!-- 注册模式 -->
+    <view wx:else>
+      <view class="login-title-area">
+        <text class="login-title">注册新账号</text>
+        <text class="login-subtitle">用手机号创建你的冰箱伴侣账号</text>
+      </view>
+
+      <!-- 手机号按钮 -->
+      <button
+        class="phone-btn"
+        open-type="getPhoneNumber"
+        bind:getphonenumber="onGetPhoneForRegister"
+      >
+        <text class="phone-btn-icon">📲</text>
+        <text class="phone-btn-text">获取手机号快速注册</text>
+      </button>
+
+      <!-- 返回登录 -->
+      <text class="back-link" bindtap="goBackToLogin">← 返回登录</text>
+    </view>
+  </view>
+
+  <!-- 底部协议 -->
+  <view class="login-footer">
+    <text class="agreement-text">登录即表示同意《用户协议》和《隐私政策》</text>
+  </view>
+</view>

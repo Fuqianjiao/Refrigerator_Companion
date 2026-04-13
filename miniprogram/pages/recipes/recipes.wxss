@@ -1,0 +1,134 @@
+/* pages/recipes/recipes.wxss */
+
+.recipes-page {
+  padding: 0 24rpx 40rpx;
+  background: var(--color-bg);
+}
+
+.recipes-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-bg);
+  padding-top: 16rpx;
+}
+
+.search-row { margin-top: 16rpx; }
+
+.search-box {
+  display: flex;
+  align-items: center;
+  height: 76rpx;
+  padding: 0 24rpx;
+  background: #FFFFFF;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+}
+
+.search-box text:first-child { font-size: 28rpx; margin-right: 12rpx; }
+.search-box input { flex: 1; font-size: var(--font-size-base); color: var(--color-text-primary); height: 100%; }
+.search-placeholder { color: var(--color-text-hint); }
+
+.filter-scroll { white-space: nowrap; padding: 12rpx 0; }
+.filter-tags { display: inline-flex; gap: 12rpx; }
+
+.filter-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: 10rpx 22rpx;
+  background: #FFFFFF;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--duration-fast) ease-out;
+  flex-shrink: 0;
+}
+
+.filter-tag--active {
+  background: var(--color-primary-gradient);
+  color: #fff;
+  box-shadow: 0 4rpx 16rpx rgba(255, 106, 136, 0.25);
+  transform: scale(1.03);
+}
+.filter-count { font-size: 18rpx; opacity: 0.85; }
+
+.match-hint {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  padding: 14rpx 20rpx;
+  margin: 8rpx 0 16rpx;
+  background: linear-gradient(135deg, #E8F5E9, #F1F8E9);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+.match-highlight { color: #2B8A3E; font-weight: var(--font-weight-bold); }
+.source-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2rpx 12rpx;
+  border-radius: var(--radius-sm);
+  font-size: 18rpx;
+  margin-left: 8rpx;
+}
+.source-tag.mealdb { background: #E8F5E9; color: #2E7D32; }
+.source-tag.extended_built_in { background: #E3F2FD; color: #1565C0; }
+
+/* === TheMealDB 推荐横幅 === */
+.mealdb-banner {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 24rpx;
+  margin: 16rpx 0;
+  background: linear-gradient(135deg, #E8F5E9, #F1F8E9);
+  border-radius: var(--radius-lg);
+  border: 1rpx solid #C8E6C9;
+  position: relative;
+}
+.mealdb-banner__icon { font-size: 44rpx; margin-right: 16rpx; animation: breathe 2s ease-in-out infinite; }
+.mealdb-banner__text { flex: 1; display: flex; flex-direction: column; gap: 4rpx; }
+.mealdb-banner__title { font-size: var(--font-size-md); font-weight: var(--font-weight-bold); color: #2E7D32; }
+.mealdb-banner__desc { font-size: var(--font-size-xs); color: #558B2F; opacity: 0.8; }
+.mealdb-banner__action {
+  padding: 12rpx 28rpx;
+  background: var(--color-primary-gradient);
+  color: #fff;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  box-shadow: 0 4rpx 12rpx rgba(255, 106, 136, 0.25);
+}
+.mealdb-banner__close {
+  position: absolute;
+  top: 8rpx;
+  right: 12rpx;
+  padding: 4rpx 10rpx;
+  color: var(--color-text-hint);
+  font-size: 22rpx;
+}
+
+/* TheMealDB 加载更多按钮 */
+.mealdb-load-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  background: linear-gradient(135deg, #E8F5E9, #F1F8E9) !important;
+  color: #2E7D32 !important;
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-lg);
+  border: 1rpx solid #C8E6C9;
+}
+.mealdb-icon { font-size: 32rpx; }
+
+.recipe-list { display: flex; flex-direction: column; }
+
+.load-more {
+  text-align: center;
+  padding: 32rpx 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-hint);
+}

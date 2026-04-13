@@ -1,0 +1,1 @@
+{"usingComponents": {"recipe-card": "../../components/recipe-card/recipe-card", "food-card": "../../components/food-card/food-card", "empty-state": "../../components/empty-state/empty-state"}, "navigationBarTitleText": "🧊 冰箱管家", "enablePullDownRefresh": true, "backgroundTextStyle": "dark"}

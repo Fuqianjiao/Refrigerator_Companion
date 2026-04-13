@@ -1,0 +1,85 @@
+<!-- pages/cook-history/cook-history.wxml -->
+<view class="page-container cook-history-page">
+
+  <!-- ====== 顶部统计区（3个数据卡片并排）====== -->
+  <view class="stats-row">
+    <view class="stat-card stat-card--primary">
+      <text class="stat-card__num">{{stats.monthCount}}</text>
+      <text class="stat-card__label">本月做菜</text>
+    </view>
+    <view class="stat-card stat-card--money">
+      <text class="stat-card__num stat-card__num--money">¥ {{stats.totalSaved}}</text>
+      <text class="stat-card__label">累计节省</text>
+    </view>
+    <view class="stat-card stat-card--favorite">
+      <text class="stat-card__name">{{stats.favoriteDish}}</text>
+      <text class="stat-card__label">最常做</text>
+    </view>
+  </view>
+
+  <!-- ====== 月份筛选 Tab ====== -->
+  <scroll-view scroll-x class="month-tabs" enhanced show-scrollbar="{{false}}">
+    <view class="month-tabs__inner">
+      <view
+        wx:for="{{tabs}}"
+        wx:key="value"
+        class="month-tab {{currentTab === item.value ? 'month-tab--active' : ''}}"
+        data-value="{{item.value}}"
+        bindtap="onTabChange"
+      >
+        <text>{{item.label}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- ====== 加载状态 ====== -->
+  <view wx:if="{{loading}}" class="cook-loading">
+    <view class="loading-spinner"></view>
+    <text>加载中...</text>
+  </view>
+
+  <!-- ====== 做菜记录列表（按时间倒序）====== -->
+  <view class="history-list" wx:if="{{!loading && !isEmpty}}">
+    <block wx:for="{{filteredRecords}}" wx:key="_id">
+      <view class="history-item">
+        <!-- 左：菜品图片 60x60 圆角 -->
+        <image
+          class="history-item__img"
+          src="{{item.image}}"
+          mode="aspectFill"
+        />
+        
+        <!-- 中：信息区 -->
+        <view class="history-item__info">
+          <!-- 菜名 + 时间 -->
+          <view class="history-item__header">
+            <text class="history-item__name">{{item.name}}</text>
+            <text class="history-item__time">{{item.dateStr}}  {{item.timeStr}}</text>
+          </view>
+
+          <!-- 消耗的冰箱食材 -->
+          <view class="history-item__ingredients" wx:if="{{item.ingredients.length > 0}}">
+            <text class="history-item__ing-label">用了：</text>
+            <text class="history-item__ing-text">{{item.ingredients.join(' · ')}}</text>
+          </view>
+        </view>
+
+        <!-- 右："再做一次"按钮 -->
+        <view class="history-item__action" bindtap="goRecipeDetail" data-id="{{item.recipeId}}">
+          <text class="history-item__btn">再做一次</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- ====== 空状态 ====== -->
+  <empty-state
+    wx:if="{{!loading && isEmpty}}"
+    icon="🍳"
+    title="还没有做菜记录"
+    desc="做完一道菜后，来这里记录吧"
+    action-text="去发现菜谱"
+    bind:action="goDiscoverRecipes"
+  />
+
+</view>

@@ -1,0 +1,117 @@
+<!-- pages/recipes/recipes.wxml -->
+<view class="page-container recipes-page">
+  <!-- === 顶部场景切换 + 搜索 === -->
+  <view class="recipes-header">
+    <scene-switcher 
+      current="{{scenario}}" 
+      bind:change="onScenarioChange"
+    />
+    
+    <view class="search-row">
+      <view class="search-box">
+        <text>🔍</text>
+        <input
+          placeholder="搜索菜谱..."
+          value="{{searchKey}}"
+          bindinput="onSearchInput"
+          confirm-type="search"
+          placeholder-class="search-placeholder"
+        />
+      </view>
+    </view>
+  </view>
+
+  <!-- === 筛选标签 === -->
+  <scroll-view scroll-x class="filter-scroll" enhanced show-scrollbar="{{false}}">
+    <view class="filter-tags">
+      <view 
+        wx:for="{{filters}}" 
+        wx:key="value"
+        class="filter-tag {{currentFilter === item.value ? 'filter-tag--active' : ''}}"
+        data-value="{{item.value}}"
+        bindtap="onFilterChange"
+      >
+        <text>{{item.label}}</text>
+        <view wx:if="{{!(item.count === undefined)}}" class="filter-count">{{item.count}}</view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- === 匹配度提示条 === -->
+  <view class="match-hint" wx:if="{{!loading && recipes.length > 0}}">
+    <text>🧊 冰箱里有 {{foodCount}} 种食材，</text>
+    <text class="match-highlight">可做 {{canCookCount}} 道菜</text>
+    <text wx:if="{{!(currentSource === 'built_in')}}" class="source-tag {{currentSource}}">· {{currentSource === 'mealdb' ? 'TheMealDB' : '扩展数据'}}</text>
+  </view>
+
+  <!-- TheMealDB 推荐横幅 -->
+  <view class="mealdb-banner" wx:if="{{showMealdbBanner && !loading && recipes.length > 0 && currentSource === 'built_in'}}">
+    <view class="mealdb-banner__icon">🍽️</view>
+    <view class="mealdb-banner__text">
+      <text class="mealdb-banner__title">发现更多美味！</text>
+      <text class="mealdb-banner__desc">来自全球 300+ 道精选海外菜谱等你探索</text>
+    </view>
+    <view class="mealdb-banner__action" bindtap="loadMoreMealdb">
+      <text>去看看</text>
+    </view>
+    <view class="mealdb-banner__close" bindtap="hideMealdbBanner">
+      <text>✕</text>
+    </view>
+  </view>
+
+  <!-- === 菜谱列表 === -->
+  <view class="recipe-list" wx:if="{{recipes.length > 0 && !loading}}">
+    <recipe-card
+      wx:for="{{recipes}}"
+      wx:key="_id"
+      name="{{item.name}}"
+      image="{{item.image}}"
+      description="{{item.description}}"
+      cook-time="{{item.cookTime}}"
+      difficulty="{{item.difficulty}}"
+      tags="{{item.tags}}"
+      match-rate="{{item.matchRate}}"
+      can-cook="{{item.canCook}}"
+      cook-level="{{item.cookLevel}}"
+      scenario="{{scenario}}"
+      servings="{{item.servings}}"
+      missing-ingredients="{{item.missingIngredients}}"
+      bind:tap="goDetail"
+      data-id="{{item._id}}"
+    />
+  </view>
+
+  <!-- 空状态 -->
+  <empty-state
+    wx:elif="{{!loading}}"
+    icon="🍳"
+    title="{{searchKey ? '没找到相关菜谱' : '暂无菜谱推荐'}}"
+    desc="{{searchKey ? '换个关键词试试吧' : '先去添加一些食材，就能匹配到菜谱啦！'}}"
+    action-text="{{searchKey ? '' : '去添加食材'}}"
+    bind:action="goAddFood"
+  />
+
+  <!-- 加载中 -->
+  <view class="loading-spinner" wx:if="{{loading}}">
+    <view class="loading-dots">
+      <text class="dot dot-1">●</text>
+      <text class="dot dot-2">●</text>
+      <text class="dot dot-3">●</text>
+    </view>
+  </view>
+
+  <!-- 加载更多 -->
+  <view class="load-more" wx:if="{{hasMore && !loading && recipes.length > 0}}" bindtap="loadMore">
+    <text>{{loadingMore ? '加载中...' : '加载更多 ↓'}}</text>
+  </view>
+  
+  <!-- 加载更多 MealDB 菜谱（当内置数据已显示完） -->
+  <view 
+    class="load-more mealdb-load-more" 
+    wx:if="{{!hasMore && !loading && recipes.length > 0 && currentSource === 'built_in'}}" 
+    bindtap="loadMoreMealdb"
+  >
+    <text class="mealdb-icon">🍽️</text>
+    <text>{{mealdbLoading ? '正在获取海外菜谱...' : '从 TheMealDB 发现更多美味 →'}}</text>
+  </view>
+</view>

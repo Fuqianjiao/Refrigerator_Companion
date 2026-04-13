@@ -1,0 +1,1 @@
+{"name": "consumeIngredients", "version": "1.0.0", "description": "一键清耗食材 - 做完菜后扣减库存", "main": "index.js", "dependencies": {"wx-server-sdk": "~2.6.3"}}

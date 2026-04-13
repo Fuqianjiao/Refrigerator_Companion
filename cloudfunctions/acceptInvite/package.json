@@ -1,0 +1,1 @@
+{"name": "acceptInvite", "version": "1.0.0", "description": "接受冰箱共享邀请 — 校验邀请码并加入成员列表", "main": "index.js", "dependencies": {"wx-server-sdk": "~2.6.3"}}

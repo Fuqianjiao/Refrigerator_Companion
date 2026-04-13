@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>FridgeMate - 智能冰箱管家</title>
+<style>
+  /* ==================== CSS 变量（与小程序 variables.wxss 同步）==================== */
+  :root {
+    --color-primary: #6BCBA7;
+    --color-primary-light: #8ED9BF;
+    --color-primary-dark: #4AA88A;
+    --color-sky: #87CEEB;
+    --color-lemon: #FFD166;
+    --color-lavender: #B692E4;
+    --color-coral: #FF8B7B;
+    --color-bg: #F5F9F7;
+    --color-card: #FFFFFF;
+    --color-text-primary: #1A1A2E;
+    --color-text-secondary: #555570;
+    --color-text-hint: #9999AD;
+    --color-border: #E8ECF0;
+    --color-divider: #EEF0F2;
+    --color-success: #51CF66;
+    --color-warning: #FFD43B;
+    --color-danger: #FF6B6B;
+
+    --radius-sm: 8rpx;
+    --radius-md: 16rpx;
+    --radius-lg: 24rpx;
+    --radius-xl: 36rpx;
+    --radius-round: 50%;
+    --radius-card: 22rpx;
+
+    --font-size-xs: 20rpx;
+    --font-size-sm: 24rpx;
+    --font-size-base: 28rpx;
+    --font-size-md: 32rpx;
+    --font-size-lg: 36rpx;
+    --font-size-xl: 44rpx;
+    --font-size-xxl: 56rpx;
+
+    --spacing-xs: 8rpx;
+    --spacing-sm: 16rpx;
+    --spacing-md: 24rpx;
+    --spacing-lg: 32rpx;
+    --spacing-xl: 48rpx;
+
+    --tabbar-height: 110rpx;
+
+    --shadow-sm: 0 2px 8px rgba(107, 203, 167, 0.06);
+    --shadow-md: 0 4px 16px rgba(107, 203, 167, 0.10);
+    --shadow-lg: 0 8px 32px rgba(107, 203, 167, 0.14);
+
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background-color: var(--color-bg);
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(107,203,167,0.04) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(135,206,235,0.04) 0%, transparent 50%);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ==================== 手机框架 ==================== */
+  .phone-frame {
+    width: 390px;
+    max-width: 100vw;
+    margin: 20px auto;
+    background: #000;
+    border-radius: 48px;
+    padding: 12px;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.25), inset 0 0 0 2px #333;
+    position: relative;
+  }
+
+  .phone-notch {
+    position: absolute;
+    top: 12px; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 30px;
+    background: #000;
+    border-radius: 0 0 18px 18px;
+    z-index: 10;
+  }
+
+  .phone-screen {
+    border-radius: 36px;
+    overflow: hidden;
+    position: relative;
+    height: 780px;
+    background: var(--color-bg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ==================== 页面容器 ==================== */
+  .page { flex: 1; position: relative; overflow: hidden; display: none; flex-direction: column; }
+  .page.active { display: flex; animation: pageSlideUp 0.35s ease-out both; }
+
+  @keyframes pageSlideUp {
+    from { opacity: 0; transform: translateY(40rpx); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .container {
+    padding: calc(var(--spacing-md) + 10px) var(--spacing-md) calc(var(--tabbar-height) + var(--spacing-xl));
+    flex: 1; overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .container::-webkit-scrollbar { display: none; }
+
+  /* ==================== 导航栏 ==================== */
+  .nav-bar {
+    padding: 52px 24px 16px;
+    text-align: center;
+    position: relative;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-sky), var(--color-lavender));
+    color: white;
+    overflow: hidden;
+  }
+  .nav-bar::before {
+    content: '';
+    position: absolute;
+    bottom: -2px; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg,
+      var(--color-primary) 0%, var(--color-sky) 25%, var(--color-lavender) 50%, var(--color-coral) 75%, var(--color-lemon) 100%
+    );
+  }
+  .nav-bar::after {
+    content: '';
+    position: absolute; top: -40%; right: -10%;
+    width: 200px; height: 200px;
+    background: rgba(255,255,255,0.08); border-radius: 50%;
+  }
+  .nav-title {
+    font-size: var(--font-size-xl);
+    font-weight: 800;
+    letter-spacing: 2px;
+    position: relative;
+    z-index: 1;
+  }
+  .nav-subtitle {
+    font-size: var(--font-size-sm);
+    opacity: 0.85;
+    margin-top: 4px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ==================== 首页专属导航栏 ==================== */
+  .nav-home {
+    padding: 56px 24px 28px;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-sky));
+    color: white;
+    border-bottom-left-radius: 36px;
+    border-bottom-right-radius: 36px;
+    margin-bottom: -12px;
+    position: relative;
+  }
+  .nav-home::after {
+    content: '';
+    position: absolute; top: -30%; right: -15%;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+  }
+  .greeting-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; position: relative; z-index: 1; }
+  .greeting-text h1 { font-size: 30px; font-weight: 800; line-height: 1.3; }
+  .greeting-text p { font-size: 13px; opacity: 0.88; margin-top: 2px; }
+  .avatar-ring {
+    width: 54px; height: 54px; border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.45);
+    padding: 3px; position: relative;
+  }
+  .avatar-inner { width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(135deg, var(--color-coral), var(--color-lemon)); display: flex; align-items: center; justify-content: center; font-size: 26px; animation: avatarPulse 3s ease-in-out infinite; }
+  @keyframes avatarPulse { 0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,0.2)} 50%{box-shadow:0 0 0 10px rgba(255,255,255,0)} }
+  .search-bar-home {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 11px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--color-text-hint);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    position: relative;
+    z-index: 1;
+    transition: all 0.25s ease;
+  }
+  .search-bar-home:hover { box-shadow: 0 6px 22px rgba(0,0,0,0.1); transform: translateY(-1px); }
+
+  /* ==================== 统计卡片 ==================== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 22px;
+    animation: staggerFadeIn 0.5s ease-out both;
+  }
+  @keyframes staggerFadeIn {
+    from { opacity: 0; transform: translateY(16rpx) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .stat-card {
+    background: white;
+    border-radius: 20px;
+    padding: 18px 12px;
+    text-align: center;
+    box-shadow: 0 3px 14px rgba(107,203,167,0.09);
+    transition: all 0.25s var(--ease-bounce);
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    border-radius: 20px 20px 0 0;
+  }
+  .stat-card:nth-child(1)::before { background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light)); }
+  .stat-card:nth-child(2)::before { background: linear-gradient(90deg, var(--color-sky), var(--color-lavender)); }
+  .stat-card:nth-child(3)::before { background: linear-gradient(90deg, var(--color-coral), var(--color-lemon)); }
+  .stat-card:active { transform: scale(0.96); }
+  .stat-icon { font-size: 34px; margin-bottom: 6px; display: block; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.08)); }
+  .stat-num { font-size: 29px; font-weight: 900; display: block; line-height: 1.2; }
+  .stat-num.green { color: var(--color-primary-dark); }
+  .stat-num.blue { color: #1971C2; }
+  .stat-num.orange { color: #E67700; }
+  .stat-label { font-size: 11px; color: var(--color-text-hint); margin-top: 2px; }
+
+  /* ==================== 分类标签栏 ==================== */
+  .category-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding: 2px 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  .category-tabs::-webkit-scrollbar { display: none; }
+  .cat-tab {
+    flex-shrink: 0;
+    padding: 9px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s var(--ease-bounce);
+    white-space: nowrap;
+    background: rgba(107, 203, 167, 0.08);
+    color: var(--color-secondary);
+    border: 1.5px solid transparent;
+  }
+  .cat-tab.active {
+    background: white;
+    color: var(--color-primary-dark);
+    border-color: var(--color-primary);
+    box-shadow: 0 3px 12px rgba(107, 203, 167, 0.18);
+    font-weight: 700;
+  }
+  .cat-tab:not(.active):active { background: rgba(107,203,167,0.15); }
+
+  /* ==================== 卡片系统 ==================== */
+  .card {
+    background: white;
+    border-radius: var(--radius-card);
+    padding: var(--spacing-lg);
+    margin-bottom: 18px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s var(--ease-bounce);
+    animation: cardIn 0.5s ease-out both;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 16rpx; bottom: 16rpx;
+    width: 7px;
+    background: linear-gradient(180deg, var(--color-primary), var(--color-sky));
+    border-radius: 0 4px 4px 0;
+    opacity: 0.65;
+    transition: opacity 0.2s, width 0.25s;
+  }
+  .card:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(107,203,167,0.08);
+  }
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(20rpx); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    font-size: var(--font-size-md);
+    font-weight: 750;
+    color: var(--color-text-primary);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-more {
+    font-size: 12px;
+    color: var(--color-primary);
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* ==================== 冰箱物品项 ==================== */
+  .item-list { display: flex; flex-direction: column; gap: 14px; }
+  .item-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    background: #FAFCFB;
+    border-radius: 18px;
+    border: 1.5px solid transparent;
+    transition: all 0.2s ease;
+  }
+  .item-card:hover { border-color: rgba(107,203,167,0.2); background: #fff; }
+  .item-card:active { transform: scale(0.97); }
+  .item-icon-wrap {
+    width: 56px; height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .item-icon-wrap.green { background: linear-gradient(135deg, rgba(107,203,167,0.15), rgba(107,203,167,0.05)); }
+  .item-icon-wrap.blue { background: linear-gradient(135deg, rgba(135,206,235,0.18), rgba(135,206,235,0.05)); }
+  .item-icon-wrap.yellow { background: linear-gradient(135deg, rgba(255,209,102,0.18), rgba(255,209,102,0.05)); }
+  .item-icon-wrap.red { background: linear-gradient(135deg, rgba(255,139,123,0.15), rgba(255,139,123,0.05)); }
+  .item-info { flex: 1; min-width: 0; }
+  .item-name { font-size: 15px; font-weight: 700; color: var(--color-text-primary); margin-bottom: 3px; }
+  .item-meta { font-size: 12px; color: var(--color-text-hint); display: flex; gap: 12px; align-items: center; }
+  .item-tag { 
+    display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 8px; 
+    font-size: 10px; font-weight: 700; 
+  }
+  .item-tag.fresh { background: rgba(81,207,102,0.12); color: #2B8A3E; }
+  .item-tag.soon { background: rgba(255,212,59,0.15); color: #E67700; }
+  .item-tag.exp { background: rgba(255,107,107,0.12); color: #C92A2A; }
+  .item-btn-del {
+    width: 34px; height: 34px;
+    border-radius: 12px;
+    background: rgba(255,107,107,0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    color: var(--color-danger);
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .item-btn-del:active { background: rgba(255,107,107,0.2); transform: scale(0.9); }
+
+  /* 快速添加按钮区域 */
+  .quick-add-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 18px;
+    border: 2.5px dashed rgba(107,203,167,0.25);
+    border-radius: 20px;
+    color: var(--color-primary-dark);
+    font-weight: 650;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    background: rgba(107,203,167,0.02);
+    margin-top: 6px;
+  }
+  .quick-add-area:active { background: rgba(107,203,167,0.1); transform: scale(0.98); }
+  .quick-add-area span:first-child {
+    width: 30px; height: 30px;
+    background: var(--color-primary);
+    color: white;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 300;
+  }
+
+  /* ==================== TabBar 底部导航 ==================== */
+  .tab-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(var(--tabbar-height) + env(safe-area-inset-bottom));
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-top: 1.5px solid rgba(107,203,167,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding-bottom: env(safe-area-inset-bottom);
+    z-index: 999;
+  }
+  .tab-bar::before {
+    content: ''; position: absolute; top: -4px; left: 10%; right: 10%;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, rgba(107,203,167,0.15), rgba(135,206,235,0.15), rgba(182,146,228,0.15), transparent);
+    filter: blur(1px);
+  }
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    min-width: 60px;
+  }
+  .tab-icon {
+    font-size: 27px;
+    line-height: 1;
+    transition: all 0.25s var(--ease-bounce);
+    position: relative;
+  }
+  .tab-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--color-text-hint);
+    transition: all 0.2s ease;
+  }
+  .tab-item.active .tab-icon {
+    transform: scale(1.15) translateY(-2px);
+    filter: drop-shadow(0 2px 4px rgba(107,203,167,0.25));
+  }
+  .tab-item.active .tab-label {
+    color: var(--color-primary);
+    font-weight: 750;
+  }
+
+  /* TabBar 中间添加按钮 */
+  .tab-center-btn {
+    position: relative;
+    top: -18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .center-circle {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary), #51CF66);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    color: white;
+    box-shadow: 0 5px 18px rgba(107,203,167,0.35);
+    transition: all 0.25s var(--ease-bounce);
+    cursor: pointer;
+    position: relative;
+  }
+  .center-circle::after {
+    content: '';
+    position: absolute; inset: -4px;
+    border-radius: 50%;
+    border: 2px dashed rgba(107,203,167,0.25);
+    animation: spin 8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .center-circle:hover { transform: scale(1.08) rotate(90deg); box-shadow: 0 6px 22px rgba(107,203,167,0.45); }
+  .center-circle:active { transform: scale(0.94); }
+  .center-label { font-size: 10px; font-weight: 600; color: var(--color-primary-dark); margin-top: 2px; }
+
+  /* ==================== 提示条 ==================== */
+  .tip-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 18px;
+    border-radius: 17px;
+    font-size: 13px;
+    font-weight: 550;
+    margin-bottom: 18px;
+  }
+  .tip-bar.info {
+    background: linear-gradient(135deg, rgba(107,203,167,0.1), rgba(135,206,235,0.1));
+    color: #2B8A3E;
+    border: 1px solid rgba(107,203,167,0.15);
+  }
+  .tip-bar.warn {
+    background: linear-gradient(135deg, rgba(255,209,102,0.12), rgba(255,139,123,0.08));
+    color: #E67700;
+    border: 1px solid rgba(255,209,102,0.2);
+  }
+  .tip-icon { font-size: 21px; flex-shrink: 0; }
+  .tip-text { flex: 1; }
+  .tip-action {
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--color-primary);
+    cursor: pointer;
+  }
+
+  /* ==================== 按钮系统 ==================== */
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18rpx 38rpx;
+    border-radius: var(--radius-xl);
+    font-size: var(--font-size-base);
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s var(--ease-bounce);
+    position: relative;
+    overflow: hidden;
+  }
+  .btn:active { transform: scale(0.96); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--color-primary), #51CF66);
+    color: #fff;
+    box-shadow: 0 6rpx 20rpx rgba(107,203,167,0.35);
+  }
+  .btn-warm {
+    background: linear-gradient(135deg, var(--color-coral), var(--color-lemon));
+    color: #fff;
+    box-shadow: 0 6rpx 20rpx rgba(255,139,123,0.30);
+  }
+  .btn-block { width: 100%; }
+
+  /* ==================== 标签/Tag ==================== */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 5rpx 16rpx;
+    border-radius: var(--radius-round);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .tag-green { background: linear-gradient(135deg, rgba(107,203,167,0.15), rgba(107,203,167,0.08)); color: #389E70; }
+  .tag-blue { background: linear-gradient(135deg, rgba(135,206,235,0.15), rgba(135,206,235,0.08)); color: #1971C2; }
+  .tag-yellow { background: linear-gradient(135deg, rgba(255,209,102,0.15), rgba(255,209,102,0.08)); color: #E67700; }
+  .tag-red { background: linear-gradient(135deg, rgba(255,107,107,0.12), rgba(255,107,107,0.06)); color: #C92A2A; }
+
+  /* ==================== 空状态 ==================== */
+  .empty-state { display: flex; flex-direction: column; align-items: center; padding: 60rpx var(--spacing-xl); color: var(--color-text-hint); }
+  .empty-icon { font-size: 100rpx; margin-bottom: var(--spacing-lg); animation: float 3s ease-in-out infinite; }
+  .empty-text { font-size: var(--font-size-base); }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12rpx)} }
+
+  /* ==================== 表单元素 ==================== */
+  .form-group { margin-bottom: 24px; }
+  .form-label { display: block; font-size: 14px; font-weight: 650; color: var(--color-text-primary); margin-bottom: 8px; }
+  .form-input {
+    width: 100%;
+    height: 86rpx;
+    padding: 0 24rpx;
+    background: #FAFBFC;
+    border: 2rpx solid var(--color-border);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-base);
+    color: var(--color-text-primary);
+    transition: all 0.2s ease;
+  }
+  .form-input:focus { border-color: var(--color-primary); background: #fff; box-shadow: 0 0 0 4rpx rgba(107,203,167,0.1); outline: none; }
+  .form-textarea {
+    width: 100%;
+    min-height: 160rpx;
+    padding: 20rpx 24rpx;
+    background: #FAFBFC;
+    border: 2rpx solid var(--color-border);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    resize: none;
+  }
+
+  /* 分类选择器 */
+  .cat-picker {
+    display: flex; flex-wrap: wrap; gap: 10px;
+  }
+  .cat-option {
+    padding: 8px 18px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 2rpx solid var(--color-border);
+    background: white;
+    color: var(--color-text-secondary);
+    transition: all 0.2s ease;
+  }
+  .cat-option.selected {
+    border-color: var(--color-primary);
+    background: rgba(107,203,167,0.08);
+    color: var(--color-primary-dark);
+  }
+
+  /* 日期选择器样式 */
+  .date-picker-row {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .date-picker-input {
+    flex: 1;
+    height: 72rpx;
+    padding: 0 20rpx;
+    background: #FAFBFC;
+    border: 2rpx solid var(--color-border);
+    border-radius: var(--radius-lg);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+  }
+
+  /* ==================== 食谱页面特有样式 ==================== */
+  .recipe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .recipe-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-sm); transition: all 0.25s var(--ease-bounce); }
+  .recipe-card:active { transform: scale(0.97); }
+  .recipe-img {
+    width: 100%; height: 130px;
+    background: linear-gradient(135deg, var(--color-sky), var(--color-lavender));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 44px; position: relative; overflow: hidden;
+  }
+  .recipe-img::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.04));
+  }
+  .recipe-body { padding: 14px; }
+  .recipe-name { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .recipe-meta { font-size: 11px; color: var(--color-text-hint); display: flex; gap: 8px; }
+  .recipe-match { font-size: 10px; font-weight: 700; color: white; background: var(--color-primary); padding: 2px 10px; border-radius: 8px; margin-top: 8px; display: inline-block; }
+
+  /* ==================== 我的页面 ==================== */
+  .profile-header {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-sky));
+    padding: 40px 24px 30px;
+    text-align: center;
+    color: white;
+    border-bottom-left-radius: 36px;
+    border-bottom-right-radius: 36px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .profile-header::after {
+    content: ''; position: absolute; top: -30%; right: -15%;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  }
+  .profile-avatar {
+    width: 80px; height: 80px; border-radius: 50%;
+    border: 4px solid rgba(255,255,255,0.4);
+    margin: 0 auto 12px;
+    background: linear-gradient(135deg, var(--color-coral), var(--color-lemon));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px;
+  }
+  .profile-name { font-size: 22px; font-weight: 800; }
+  .profile-desc { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+
+  .menu-list { display: flex; flex-direction: column; gap: 2px; }
+  .menu-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 18px 24px;
+    background: white;
+    border-bottom: 1px solid #f5f5f5;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .menu-item:active { background: #fafafa; }
+  .menu-icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .menu-icon.green { background: rgba(107,203,167,0.1); }
+  .menu-icon.blue { background: rgba(135,206,235,0.12); }
+  .menu-icon.yellow { background: rgba(255,209,102,0.12); }
+  .menu-icon.purple { background: rgba(182,146,228,0.12); }
+  .menu-icon.coral { background: rgba(255,139,123,0.1); }
+  .menu-text { flex: 1; font-size: 15px; font-weight: 600; }
+  .menu-arrow { color: var(--color-text-hint); font-size: 14px; }
+
+  /* ==================== 趣味装饰动效 ==================== */
+  .bubble-float { animation: bubbleFloat 4s ease-in-out infinite; }
+  @keyframes bubbleFloat { 0%,100%{transform:translateY(0) scale(1)} 33%{transform:translateY(-8rpx) scale(1.02)} 66%{transform:translateY(4rpx) scale(0.98)} }
+</style>
+</head>
+<body>
+
+<div class="phone-frame">
+  <div class="phone-notch"></div>
+  <div class="phone-screen">
+
+    <!-- ========== 首页 ========== -->
+    <div id="page-home" class="page active">
+      <!-- 导航区 -->
+      <div class="nav-home">
+        <div class="greeting-row">
+          <div class="greeting-text">
+            <h1>Hi，欢迎回来 👋</h1>
+            <p>今天想吃点什么呢？</p>
+          </div>
+          <div class="avatar-ring">
+            <div class="avatar-inner">👩‍🍳</div>
+          </div>
+        </div>
+        <div class="search-bar-home">
+          🔍 搜索食材 / 菜谱...
+        </div>
+      </div>
+
+      <div class="container">
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
+          <div class="stat-card" onclick="switchTab('fridge')">
+            <span class="stat-icon">🧊</span>
+            <span class="stat-num green">12</span>
+            <span class="stat-label">冰箱食材</span>
+          </div>
+          <div class="stat-card" onclick="switchTab('recipes')">
+            <span class="stat-icon bubble-float">🍳</span>
+            <span class="stat-num blue">3</span>
+            <span class="stat-label">即将过期</span>
+          </div>
+          <div class="stat-card" onclick="switchTab('shopping')">
+            <span class="stat-icon gentle-wiggle">⭐</span>
+            <span class="stat-num orange">5</span>
+            <span class="stat-label">推荐菜谱</span>
+          </div>
+        </div>
+
+        <!-- 过期警告 -->
+        <div class="tip-bar warn">
+          <span class="tip-icon">⏰</span>
+          <span class="tip-text">牛奶、酸奶将在 2 天内过期</span>
+          <span class="tip-action">查看 ›</span>
+        </div>
+
+        <!-- 分类标签 -->
+        <div class="category-tabs">
+          <span class="cat-tab active">全部</span>
+          <span class="cat-tab">蔬菜水果</span>
+          <span class="cat-tab">肉蛋奶</span>
+          <span class="cat-tab">饮品</span>
+          <span class="cat-tab">调料</span>
+          <span class="cat-tab">其他</span>
+        </div>
+
+        <!-- 物品列表 -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title"><span style="font-size:20px;">🧊</span> 冰箱清单</span>
+            <span class="card-more">查看全部 ›</span>
+          </div>
+          <div class="item-list">
+            <div class="item-card">
+              <div class="item-icon-wrap green">🥛</div>
+              <div class="item-info">
+                <div class="item-name">鲜牛奶</div>
+                <div class="item-meta"><span>1L · 冷藏室</span><span class="item-tag soon">即将过期</span></div>
+              </div>
+              <div class="item-btn-del">✕</div>
+            </div>
+            <div class="item-card">
+              <div class="item-icon-wrap green">🥬</div>
+              <div class="item-info">
+                <div class="item-name">有机生菜</div>
+                <div class="item-meta"><span>250g · 保鲜层</span><span class="item-tag fresh">新鲜</span></div>
+              </div>
+              <div class="item-btn-del">✕</div>
+            </div>
+            <div class="item-card">
+              <div class="item-icon-wrap blue">🥚</div>
+              <div class="item-info">
+                <div class="item-name">鸡蛋</div>
+                <div class="item-meta"><span>10个 · 门架</span><span class="item-tag fresh">新鲜</span></div>
+              </div>
+              <div class="item-btn-del">✕</div>
+            </div>
+            <div class="item-card">
+              <div class="item-icon-wrap yellow">🧀</div>
+              <div class="item-info">
+                <div class="item-name">芝士片</div>
+                <div class="item-meta"><span>10片 · 冷藏室</span><span class="item-tag fresh">新鲜</span></div>
+              </div>
+              <div class="item-btn-del">✕</div>
+            </div>
+          </div>
+          <!-- 快速添加按钮 -->
+          <div class="quick-add-area">
+            <span>＋</span> <span>快速添加食材</span>
+          </div>
+        </div>
+
+        <!-- 今日推荐 -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title"><span style="font-size:20px;">💡</span> 今日推荐</span>
+          </div>
+          <div style="padding: 10px 0;">
+            <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#FAFCFB;border-radius:18px;margin-bottom:10px;">
+              <span style="font-size:36px;" class="bubble-float">🥗</span>
+              <div style="flex:1;">
+                <div style="font-weight:700;font-size:15px;margin-bottom:3px;">凯撒沙拉</div>
+                <div style="font-size:12px;color:var(--color-text-hint);">已有 3/5 种食材</div>
+              </div>
+              <div style="font-size:11px;font-weight:700;color:white;background:var(--color-primary);padding:4px 12px;border-radius:10px;">匹配度 60%</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:14px;padding:14px;background:#FAFCFB;border-radius:18px;">
+              <span style="font-size:36px;" class="gentle-wiggle">🍰</span>
+              <div style="flex:1;">
+                <div style="font-weight:700;font-size:15px;margin-bottom:3px;">焦糖布丁</div>
+                <div style="font-size:12px;color:var(--color-text-hint);">已有 2/4 种食材</div>
+              </div>
+              <div style="font-size:11px;font-weight:700;color:white;background:var(--color-sky);padding:4px 12px;border-radius:10px;">匹配度 50%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TabBar -->
+      <div class="tab-bar">
+        <div class="tab-item active" data-page="home">
+          <span class="tab-icon">🏠</span>
+          <span class="tab-label">首页</span>
+        </div>
+        <div class="tab-item" data-page="fridge">
+          <span class="tab-icon">🧊</span>
+          <span class="tab-label">冰箱</span>
+        </div>
+        <div class="tab-center-btn">
+          <div class="center-circle" title="添加新食材">＋</div>
+          <span class="center-label">添加</span>
+        </div>
+        <div class="tab-item" data-page="recipes">
+          <span class="tab-icon">🍳</span>
+          <span class="tab-label">食谱</span>
+        </div>
+        <div class="tab-item" data-page="profile">
+          <span class="tab-icon">⭐</span>
+          <span class="tab-label">我的</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 冰箱页 ========== -->
+    <div id="page-fridge" class="page">
+      <div class="nav-bar">
+        <div class="nav-title">🧊 我的冰箱</div>
+        <div class="nav-subtitle">管理你的所有食材</div>
+      </div>
+      <div class="container">
+        <div class="tip-bar info">
+          <span class="tip-icon">💡</span>
+          <span class="tip-text">点击「添加食材」开始管理冰箱库存</span>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title"><span style="font-size:20px;">📋</span> 全部食材 (12)</span>
+          </div>
+          <div class="item-list">
+            <div class="item-card">
+              <div class="item-icon-wrap green">🥛</div><div class="item-info"><div class="item-name">鲜牛奶</div><div class="item-meta"><span>1L · 冷藏层</span><span class="item-tag soon">2天后过期</span></div></div>
+              <div class="item-btn-del">✕</div>
+            </div>
+            <div class="item-card">
+              <div class="item-icon-wrap red">🍅</div><div class="item-info"><div class="item-name">番茄</div><div class="item-meta"><span>500g · 保鲜层</span><span class="item-tag exp">已过期</span></div></div>
+              <div class="item-btn-del">✕</div>
+            </div>
+            <div class="item-card">
+              <div class="item-icon-wrap green">🥬</div><div class="item-info"><div class="item-name">有机生菜</div><div class="item-meta"><span>250g · 保鲜层</span><span class="item-tag fresh">新鲜</span></div></div>
+              <div class="item-btn-del">✕</div>
+            </div>
+            <div class="item-card">
+              <div class="item-icon-wrap blue">🥚</div><div class="item-info"><div class="item-name">鸡蛋</div><div class="item-meta"><span>10个 · 门架</span><span class="item-tag fresh">5天后过期</span></div></div>
+              <div class="item-btn-del">✕</div>
+            </div>
+            <div class="item-card">
+              <div class="item-icon-wrap yellow">🧀</div><div class="item-info"><div class="item-name">芝士片</div><div class="item-meta"><span>10片 · 冷藏层</span><span class="item-tag fresh">新鲜</span></div></div>
+              <div class="item-btn-del">✕</div>
+            </div>
+            <div class="item-card">
+              <div class="item-icon-wrap green">🥒</div><div class="item-info"><div class="item-name">黄瓜</div><div class="item-meta"><span>2根 · 保鲜层</span><span class="item-tag fresh">新鲜</span></div></div>
+              <div class="item-btn-del">✕</div>
+            </div>
+          </div>
+          <div class="quick-add-area"><span>＋</span> <span>继续添加食材</span></div>
+        </div>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab-item" data-page="home"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></div>
+        <div class="tab-item active" data-page="fridge"><span class="tab-icon">🧊</span><span class="tab-label">冰箱</span></div>
+        <div class="tab-center-btn"><div class="center-circle">＋</div><span class="center-label">添加</span></div>
+        <div class="tab-item" data-page="recipes"><span class="tab-icon">🍳</span><span class="tab-label">食谱</span></div>
+        <div class="tab-item" data-page="profile"><span class="tab-icon">⭐</span><span class="tab-label">我的</span></div>
+      </div>
+    </div>
+
+    <!-- ========== 食谱页 ========== -->
+    <div id="page-recipes" class="page">
+      <div class="nav-bar">
+        <div class="nav-title">🍳 智能食谱</div>
+        <div class="nav-subtitle">根据现有食材推荐美食</div>
+      </div>
+      <div class="container">
+        <div class="tip-bar info">
+          <span class="tip-icon">🎯</span>
+          <span class="tip-text">基于你冰箱里的 12 种食材智能推荐</span>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title"><span style="font-size:20px;">🔥</span> 高匹配推荐</span>
+          </div>
+          <div class="recipe-grid">
+            <div class="recipe-card">
+              <div class="recipe-img">🥗</div>
+              <div class="recipe-body">
+                <div class="recipe-name">凯撒沙拉</div>
+                <div class="recipe-meta"><span>⭐ 4.8</span><span>· 15分钟</span></div>
+                <div class="recipe-match">匹配 60%</div>
+              </div>
+            </div>
+            <div class="recipe-card">
+              <div class="recipe-img" style="background:linear-gradient(135deg,var(--color-coral),var(--color-lemon))">🍳</div>
+              <div class="recipe-body">
+                <div class="recipe-name">芝士蛋饼</div>
+                <div class="recipe-meta"><span>⭐ 4.6</span><span>· 10分钟</span></div>
+                <div class="recipe-match">匹配 80%</div>
+              </div>
+            </div>
+            <div class="recipe-card">
+              <div class="recipe-img" style="background:linear-gradient(135deg,var(--color-lemon),#FFE066)">🥪</div>
+              <div class="recipe-body">
+                <div class="recipe-name">三明治</div>
+                <div class="recipe-meta"><span>⭐ 4.9</span><span>· 8分钟</span></div>
+                <div class="recipe-match">匹配 55%</div>
+              </div>
+            </div>
+            <div class="recipe-card">
+              <div class="recipe-img" style="background:linear-gradient(135deg,var(--color-lavender),#DDDDFE)">🍰</div>
+              <div class="recipe-body">
+                <div class="recipe-name">焦糖布丁</div>
+                <div class="recipe-meta"><span>⭐ 4.7</span><span>· 40分钟</span></div>
+                <div class="recipe-match">匹配 50%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title"><span style="font-size:20px;">📖</span> 更多菜谱</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px;background:#FAFCFB;border-radius:16px;">
+              <span style="font-size:32px;">🍜</span>
+              <div style="flex:1;"><div style="font-weight:650;font-size:14px;">西红柿鸡蛋面</div><div style="font-size:11px;color:var(--color-text-hint);">简单快手 · 20分钟</div></div>
+              <div style="font-size:11px;font-weight:700;color:var(--color-primary);">匹配 75%</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:12px;background:#FAFCFB;border-radius:16px;">
+              <span style="font-size:32px;">🥤</span>
+              <div style="flex:1;"><div style="font-weight:650;font-size:14px;">奶昔</div><div style="font-size:11px;color:var(--color-text-hint);">健康饮品 · 5分钟</div></div>
+              <div style="font-size:11px;font-weight:700;color:var(--color-primary);">匹配 90%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab-item" data-page="home"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></div>
+        <div class="tab-item" data-page="fridge"><span class="tab-icon">🧊</span><span class="tab-label">冰箱</span></div>
+        <div class="tab-center-btn"><div class="center-circle">＋</div><span class="center-label">添加</span></div>
+        <div class="tab-item active" data-page="recipes"><span class="tab-icon">🍳</span><span class="tab-label">食谱</span></div>
+        <div class="tab-item" data-page="profile"><span class="tab-icon">⭐</span><span class="tab-label">我的</span></div>
+      </div>
+    </div>
+
+    <!-- ========== 我的页面 ========== -->
+    <div id="page-profile" class="page">
+      <div class="container">
+        <div class="profile-header">
+          <div class="profile-avatar pulse-gentle">👩‍🍳</div>
+          <div class="profile-name">FridgeMate 用户</div>
+          <div class="profile-desc">已使用 FridgeMate 7 天</div>
+        </div>
+
+        <div class="menu-list">
+          <div class="menu-item">
+            <div class="menu-icon green">📊</div>
+            <span class="menu-text">数据统计</span>
+            <span class="menu-arrow">›</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-icon blue">🔔</div>
+            <span class="menu-text">提醒设置</span>
+            <span class="menu-arrow">›</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-icon yellow">⚙️</div>
+            <span class="menu-text">偏好设置</span>
+            <span class="menu-arrow">›</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-icon purple">🛒</div>
+            <span class="menu-text">购物清单</span>
+            <span class="menu-arrow">›</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-icon coral">❤️</div>
+            <span class="menu-text">我的收藏</span>
+            <span class="menu-arrow">›</span>
+          </div>
+          <div class="menu-item">
+            <div class="menu-icon green">📖</div>
+            <span class="menu-text">帮助与反馈</span>
+            <span class="menu-arrow">›</span>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;text-align:center;">
+          <span style="font-size:12px;color:var(--color-text-hint);">FridgeMate v1.0.0 · 让每一份食材都不被浪费</span>
+        </div>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab-item" data-page="home"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></div>
+        <div class="tab-item" data-page="fridge"><span class="tab-icon">🧊</span><span class="tab-label">冰箱</span></div>
+        <div class="tab-center-btn"><div class="center-circle">＋</div><span class="center-label">添加</span></div>
+        <div class="tab-item" data-page="recipes"><span class="tab-icon">🍳</span><span class="tab-label">食谱</span></div>
+        <div class="tab-item active" data-page="profile"><span class="tab-icon">⭐</span><span class="tab-label">我的</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function switchTab(pageName) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById('page-' + pageName);
+    if (target) target.classList.add('active');
+
+    // 更新 tab 状态
+    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+    const tabs = document.querySelectorAll('.tab-item[data-page="' + pageName + '"]');
+    tabs.forEach(t => t.classList.add('active'));
+  }
+
+  document.querySelectorAll('.tab-item, .tab-center-btn').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const page = tab.dataset.page || 'home';
+      switchTab(page);
+    });
+  });
+
+  // 分类标签切换
+  document.querySelectorAll('.cat-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

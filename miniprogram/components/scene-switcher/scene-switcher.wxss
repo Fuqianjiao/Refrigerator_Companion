@@ -1,0 +1,44 @@
+/* components/scene-switcher/scene-switcher.wxss */
+
+.scene-switcher {
+  display: flex;
+  align-items: center;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-full);
+  padding: 6rpx;
+  gap: 4rpx;
+}
+
+.scene-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  padding: 14rpx 20rpx;
+  border-radius: var(--radius-full);
+  transition: all var(--duration-normal) var(--ease-spring);
+}
+
+.scene-item--active {
+  background: #FFFFFF;
+  box-shadow: var(--shadow-sm);
+  transform: scale(1.02);
+}
+
+.scene-icon {
+  font-size: 30rpx;
+  line-height: 1;
+}
+
+.scene-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-hint);
+  transition: color var(--duration-fast) ease-out;
+}
+
+.scene-item--active .scene-label {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-bold);
+}

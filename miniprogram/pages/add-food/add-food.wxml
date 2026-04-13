@@ -1,0 +1,264 @@
+<!-- pages/add-food/add-food.wxml -->
+<view class="page-container add-page">
+
+  <!-- === 顶部：选择添加方式（始终显示，支持追加）=== -->
+  <view class="mode-selector">
+    <view 
+      class="mode-card {{currentMode === 'manual' ? 'mode-card--active' : ''}}"
+      data-mode="manual"
+      bindtap="switchMode"
+    >
+      <view class="mode-card__icon">📝</view>
+      <text class="mode-card__title">手动录入</text>
+      <text class="mode-card__desc">自己填写食材信息</text>
+    </view>
+
+    <view 
+      class="mode-card"
+      data-mode="scan"
+      bindtap="startScan"
+    >
+      <view class="mode-card__icon">📷</view>
+      <text class="mode-card__title">扫码识别</text>
+      <text class="mode-card__desc">扫条形码自动填充</text>
+    </view>
+
+    <view 
+      class="mode-card"
+      data-mode="photo"
+      bindtap="takePhoto"
+    >
+      <view class="mode-card__icon">🔍</view>
+      <text class="mode-card__title">拍照OCR</text>
+      <text class="mode-card__desc">拍包装识别文字信息</text>
+    </view>
+  </view>
+
+  <!-- === 结果展示区（多来源追加）=== -->
+  <view wx:if="{{results.length > 0}}" class="results-stack">
+    
+    <!-- 每个来源一张卡片 -->
+    <view 
+      wx:for="{{results}}" 
+      wx:key="id"
+      class="result-card result-card--{{item.status}}"
+    >
+      <!-- 卡片头部 -->
+      <view class="result-card__header">
+        <text class="result-card__label">{{item.label}}</text>
+        <view class="result-card__actions">
+          <text class="result-card__action" catchtap="reDo" data-id="{{item.id}}">重做</text>
+          <text class="result-card__action result-card__action--del" catchtap="removeResult" data-id="{{item.id}}">移除</text>
+        </view>
+      </view>
+
+      <!-- 卡片内容 -->
+      <view class="result-card__body">
+        <!-- 预览图（仅拍照OCR有） -->
+        <image 
+          wx:if="{{item.imageUrl}}"
+          class="result-card__img" 
+          src="{{item.imageUrl}}" 
+          mode="aspectFill"
+        />
+
+        <view class="result-card__info">
+          <!-- 状态文字 -->
+          <text class="result-card__name {{item._isLoading ? 'loading-text' : ''}}">
+            {{item.name}}
+            <text wx:if="{{item._isLoading}}" loading />
+          </text>
+          
+          <!-- 品牌 -->
+          <text class="result-card__brand" wx:if="{{item._showBrand}}">{{item.brand}}</text>
+          
+          <!-- 保质期 -->
+          <text class="result-card__shelf-life" wx:if="{{item._showShelfLife}}">
+            保质期 {{item.shelfLifeDays}} 天
+          </text>
+          
+          <!-- 条码（仅扫码） -->
+          <text class="result-card__barcode" wx:if="{{item._showBarcode}}">
+            条码：{{item.barcode}}
+          </text>
+          
+          <!-- 补充消息 -->
+          <text class="result-card__message" wx:if="{{item.message}}">{{item.message}}</text>
+          
+          <!-- 已填入字段标签 -->
+          <view class="result-card__tags" wx:if="{{item.filledFields.length > 0}}">
+            <text 
+              wx:for="{{item.filledFields}}" 
+              wx:key="*this" 
+              class="result-card__tag"
+            >✓ {{item}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- === 表单区域 === -->
+  <view class="form-section animate-fade-in-up">
+    
+    <!-- 食材名称 -->
+    <view class="form-group">
+      <view class="form-label">
+        <text>食材名称</text>
+        <text class="required">*</text>
+      </view>
+      <input
+        class="form-input"
+        placeholder="例如：蒙牛纯牛奶"
+        value="{{formData.name}}"
+        bindinput="onInput"
+        data-field="name"
+        maxlength="30"
+      />
+    </view>
+
+    <!-- 品牌（可选） -->
+    <view class="form-group">
+      <view class="form-label"><text>品牌</text></view>
+      <input
+        class="form-input"
+        placeholder="选填，如：蒙牛、海天"
+        value="{{formData.brand}}"
+        bindinput="onInput"
+        data-field="brand"
+        maxlength="20"
+      />
+    </view>
+
+    <!-- 分类 -->
+    <view class="form-group">
+      <view class="form-label">
+        <text>分类</text>
+        <text class="required">*</text>
+      </view>
+      <scroll-view scroll-x class="category-picker-scroll">
+        <view class="category-picker">
+          <view
+            wx:for="{{categories}}"
+            wx:key="value"
+            class="cat-option {{formData.category === item.value ? 'cat-option--active' : ''}}"
+            data-value="{{item.value}}"
+            bindtap="selectCategory"
+          >
+            <text>{{item.icon}} {{item.label}}</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 存储位置 -->
+    <view class="form-group">
+      <view class="form-label"><text>存放位置</text></view>
+      <view class="location-picker">
+        <view
+          wx:for="{{locations}}"
+          wx:key="value"
+          class="loc-option {{formData.location === item.value ? 'loc-option--active' : ''}}"
+          data-value="{{item.value}}"
+          bindtap="selectLocation"
+        >
+          <text>{{item.icon}} {{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 数量 + 单位 -->
+    <view class="form-row">
+      <view class="form-group form-group--flex">
+        <view class="form-label"><text>数量</text></view>
+        <view class="quantity-control">
+          <view class="qty-btn" bindtap="changeQty" data-delta="-1">−</view>
+          <text class="qty-num">{{formData.quantity}}</text>
+          <view class="qty-btn" bindtap="changeQty" data-delta="1">+</view>
+        </view>
+      </view>
+
+      <view class="form-group form-group--flex">
+        <view class="form-label"><text>单位</text></view>
+        <picker range="{{unitOptions}}" value="{{unitIndex}}" bindchange="onUnitChange">
+          <view class="form-input form-input--picker">{{formData.unit}}</view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 生产日期 -->
+    <view class="form-group">
+      <view class="form-label"><text>生产日期</text></view>
+      <picker mode="date" value="{{formData.productionDate}}" start="{{maxProdDate}}" end="{{today}}" bindchange="onDateChange" data-field="productionDate">
+        <view class="form-input form-input--picker">
+          {{formData.productionDate || '请选择生产日期'}}
+        </view>
+      </picker>
+    </view>
+
+    <!-- 保质期天数 / 过期日期 二选一 -->
+    <view class="form-group">
+      <view class="form-label">
+        <text>保质期</text>
+        <text class="required">*</text>
+      </view>
+      
+      <view class="shelf-toggle">
+        <view class="toggle-btn {{shelfMode === 'days' ? 'toggle-btn--active' : ''}}" data-val="days" bindtap="switchShelfMode">按天数</view>
+        <view class="toggle-btn {{shelfMode === 'date' ? 'toggle-btn--active' : ''}}" data-val="date" bindtap="switchShelfMode">设过期日</view>
+      </view>
+
+      <view wx:if="{{shelfMode === 'days'}}" class="shelf-input-row">
+        <input
+          class="form-input form-input--number"
+          type="digit"
+          placeholder="保质期天数，如180"
+          value="{{formData.shelfLifeDays}}"
+          bindinput="onInput"
+          data-field="shelfLifeDays"
+        />
+        <view class="shelf-preset" wx:if="{{presetShelfLives.length > 0}}">
+          <text 
+            wx:for="{{presetShelfLives}}" 
+            wx:key="label"
+            class="preset-tag"
+            data-days="{{item.days}}"
+            bindtap="setPresetShelf"
+          >{{item.label}}</text>
+        </view>
+      </view>
+
+      <picker wx:if="{{shelfMode === 'date'}}" mode="date" value="{{formData.expiryDate}}" start="{{formData.productionDate || today}}" bindchange="onDateChange" data-field="expiryDate">
+        <view class="form-input form-input--picker">
+          {{formData.expiryDate || '选择过期日期'}}
+        </view>
+      </picker>
+
+      <view class="expiry-preview" wx:if="{{calculatedExpiryDate && shelfMode === 'days'}}">
+        <text>📅 预计过期日期：<text class="preview-date">{{calculatedExpiryDate}}</text></text>
+      </view>
+    </view>
+
+    <!-- 备注（可选） -->
+    <view class="form-group">
+      <view class="form-label"><text>备注</text></view>
+      <textarea
+        class="form-textarea"
+        placeholder="开了封要尽快喝完..."
+        value="{{formData.note}}"
+        bindinput="onInput"
+        data-field="note"
+        maxlength="100"
+        auto-height
+      />
+    </view>
+
+  </view>
+
+  <!-- 底部按钮区 -->
+  <view class="bottom-bar">
+    <button class="btn-primary btn-submit {{submitting ? 'btn-submit--disabled' : ''}}" bindtap="submitForm">
+      <text>{{submitting ? '提交中...' : '✨ 加入冰箱'}}</text>
+    </button>
+  </view>
+</view>

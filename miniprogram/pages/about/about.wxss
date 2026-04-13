@@ -1,0 +1,125 @@
+/* pages/about/about.wxss */
+
+.about-page {
+  padding: 0 24rpx 40rpx;
+}
+
+/* === 卡片基础（与 profile 页统一）=== */
+.card {
+  background: #fff;
+  border-radius: 36rpx;
+  padding: 32rpx;
+}
+
+.about-card {
+  margin-bottom: 16rpx;
+}
+
+/* === App 信息头部（卡片内居中）=== */
+.about-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 28rpx;
+}
+
+.about-icon {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 28rpx;
+  /* 用暖色渐变背景衬托图标 */
+  background: linear-gradient(135deg, #E8F5E9, #F1F8E9);
+  padding: 16rpx;
+}
+
+.about-name {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-top: 20rpx;
+}
+
+.about-version {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-hint);
+  margin-top: 8rpx;
+  background: linear-gradient(135deg, #FFF8E1, #FFFBEB);
+  padding: 4rpx 20rpx;
+  border-radius: var(--radius-full);
+}
+
+/* === 功能介绍（在卡片内）=== */
+.feature-list {
+  border-top: 1rpx solid var(--color-border);
+  padding-top: 24rpx;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 16rpx 0;
+}
+
+.feature-emoji {
+  font-size: 34rpx;
+  flex-shrink: 0;
+}
+
+.feature-text {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* === 功能入口列表卡片 === */
+.about-menu {
+  margin-bottom: 16rpx;
+}
+
+.menu-row {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 0;
+  border-bottom: 1rpx solid var(--color-border);
+}
+.menu-row--last { border-bottom: none; }
+
+.menu-label {
+  flex: 1;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+}
+
+.menu-value {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-hint);
+  margin-right: 8rpx;
+}
+
+.menu-value--ok { color: #51CF66; }
+.menu-value--cache { color: var(--color-primary); }
+
+.menu-arrow {
+  color: #D3D1C7;
+  font-size: 32rpx;
+}
+
+/* === 底部版权 === */
+.about-footer {
+  text-align: center;
+  padding: 32rpx 0 20rpx;
+}
+
+.footer-love {
+  display: block;
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  margin-bottom: 6rpx;
+}
+
+.footer-copy {
+  display: block;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-hint);
+}

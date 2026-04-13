@@ -1,0 +1,1 @@
+{"usingComponents": {"food-card": "../../components/food-card/food-card", "empty-state": "../../components/empty-state/empty-state"}, "navigationBarTitleText": "🧊 我的冰箱", "enablePullDownRefresh": true}

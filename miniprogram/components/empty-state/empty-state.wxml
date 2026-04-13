@@ -1,0 +1,10 @@
+<!-- components/empty-state/empty-state.wxml -->
+<view class="empty-state">
+  <view class="empty-state__art">{{icon}}</view>
+  <text class="empty-state__title">{{title}}</text>
+  <text class="empty-state__desc" wx:if="{{desc}}">{{desc}}</text>
+  <view class="empty-state__action" wx:if="{{actionText}}" bindtap="onActionTap">
+    <text>{{actionText}}</text>
+    <text> →</text>
+  </view>
+</view>

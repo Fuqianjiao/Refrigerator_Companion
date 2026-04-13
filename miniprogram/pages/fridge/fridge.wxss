@@ -1,0 +1,186 @@
+/* pages/fridge/fridge.wxss */
+
+.fridge-page {
+  padding-bottom: 180rpx;
+}
+
+/* === 搜索栏 === */
+.search-bar {
+  padding: 16rpx 24rpx;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--color-bg);
+}
+
+.search-input {
+  display: flex;
+  align-items: center;
+  height: 76rpx;
+  padding: 0 24rpx;
+  background: #FFFFFF;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+}
+
+.search-icon {
+  font-size: 28rpx;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.search-field {
+  flex: 1;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  height: 100%;
+}
+
+.search-placeholder {
+  color: var(--color-text-hint);
+  font-size: var(--font-size-base);
+}
+
+.search-clear {
+  width: 40rpx;
+  height: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-border);
+  color: #fff;
+  font-size: 20rpx;
+  flex-shrink: 0;
+}
+
+/* === 分类标签栏 === */
+.category-tabs {
+  display: white-space nowrap;
+  padding: 8rpx 24rpx 16rpx;
+  white-space: nowrap;
+}
+
+.category-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 14rpx 22rpx;
+  margin-right: 12rpx;
+  background: #FFFFFF;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--duration-normal) var(--ease-spring);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.category-tab--active {
+  background: var(--color-primary-gradient);
+  transform: scale(1.05);
+  box-shadow: 0 6rpx 20rpx rgba(255, 106, 136, 0.3);
+}
+
+.category-tab--active .tab-label,
+.category-tab--active .tab-icon {
+  filter: brightness(10); /* 让图标文字变白 */
+  -webkit-filter: brightness(10);
+  /* 用颜色覆盖 */
+  color: #fff !important;
+}
+
+.tab-icon {
+  font-size: 28rpx;
+  line-height: 1;
+}
+
+.tab-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  transition: color var(--duration-fast) ease-out;
+}
+
+.category-tab--active .tab-label,
+.category-tab--active .tab-icon {
+  color: #fff;
+}
+
+.tab-count {
+  min-width: 30rpx;
+  height: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 50%;
+  padding: 0 6rpx;
+}
+
+.category-tab--active .tab-count {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.tab-count text {
+  font-size: 18rpx;
+  font-weight: var(--font-weight-bold);
+  color: inherit;
+  line-height: 1;
+}
+
+/* === 筛选条 === */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 8rpx 24rpx 16rpx;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.filter-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: var(--color-border);
+  transition: background var(--duration-fast) ease-out;
+}
+
+.filter-dot--true {
+  background: var(--status-expiring);
+}
+
+.sort-btn {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.sort-arrow {
+  font-size: 20rpx;
+  transition: transform var(--duration-fast) ease-out;
+  display: inline-block;
+}
+
+.sort-asc {
+  transform: rotate(180deg);
+}
+
+.food-count {
+  margin-left: auto;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-hint);
+}
+
+/* === 食材列表 === */
+.food-list {
+  padding: 0 24rpx;
+}

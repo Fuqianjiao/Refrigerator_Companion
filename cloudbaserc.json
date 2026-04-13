@@ -1,0 +1,1 @@
+{"envId": "cloud1-0grumy09dbc5ebc0", "functionRoot": "./cloudfunctions", "functions": [{"name": "login", "timeout": 20, "runtime": "Nodejs18.15", "handler": "index.main", "installDependency": true, "path": "./cloudfunctions/login"}]}

@@ -1,0 +1,150 @@
+<!-- pages/recipe-detail/recipe-detail.wxml -->
+<view class="page-container recipe-detail-page">
+  <!-- 封面图 -->
+  <view class="detail-cover">
+    <image
+      class="cover-image"
+      src="{{image || '/images/placeholder-recipe.png'}}"
+      mode="aspectFill"
+    />
+    <view class="cover-overlay">
+      <!-- 返回按钮 -->
+      <view class="back-btn" bindtap="goBack">
+        <text>‹</text>
+      </view>
+      <!-- 匹配度标签 -->
+      <view class="match-badge {{canCook ? 'match-badge--ready' : ''}}">
+        <text>{{matchRate}}% 匹配</text>
+        <text wx:if="{{canCook}}" class="ready-label">✓ 可做</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 标题区 -->
+  <view class="title-section animate-fade-in-up">
+    <text class="recipe-name">{{name}}</text>
+    <text class="recipe-desc" wx:if="{{description}}">{{description}}</text>
+    
+    <!-- 元信息行 -->
+    <view class="meta-row">
+      <view class="meta-item">
+        <text>⏱</text>
+        <text>{{cookTime}}分钟</text>
+      </view>
+      <view class="meta-item">
+        <text>📊</text>
+        <text>{{difficultyLabel}} · {{scenarioLabel}}</text>
+      </view>
+      <view class="meta-tags" wx:if="{{tags && tags.length > 0}}">
+        <text wx:for="{{tags}}" wx:key="index" class="tag-text">#{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- === 食材清单 === -->
+  <view class="card ingredients-card">
+    <view class="card-title">
+      <text>🥬 食材清单</text>
+      <text class="servings-text">{{servingAmount}}人份</text>
+    </view>
+    
+    <view class="ing-list">
+      <view 
+        class="ing-item {{item.hasItem ? 'ing-item--has' : 'ing-item--miss'}}"
+        wx:for="{{displayIngredients}}"
+        wx:key="name"
+      >
+        <view class="ing-check">
+          <text wx:if="{{item.hasItem}}">✓</text>
+          <text wx:else>○</text>
+        </view>
+        <view class="ing-info">
+          <text class="ing-name {{!item.hasItem ? 'ing-name--miss' : ''}}">{{item.name}}</text>
+          <text class="ing-amount">{{item.amount}} {{item.unit}}</text>
+        </view>
+        <view class="ing-essential" wx:if="{{item.isEssential && !item.hasItem}}">
+          <text>缺</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 缺料提示 + 加购物清单按钮 -->
+    <view class="missing-action" wx:if="{{missingIngredients.length > 0 && !canCook}}">
+      <text class="missing-hint">还差 {{missingIngredients.length}} 种食材</text>
+      <button class="btn-add-shopping" catchtap="addMissingToShopping">🛒 加入购物清单</button>
+    </view>
+  </view>
+
+  <!-- === 烹饪步骤 === -->
+  <view class="card steps-card" wx:if="{{steps && steps.length > 0}}">
+    <view class="card-title"><text>👨‍🍳 烹饪步骤</text></view>
+    <view class="step-list">
+      <view 
+        class="step-item stagger-item"
+        wx:for="{{steps}}"
+        wx:key="order"
+      >
+        <view class="step-number-wrap">
+          <view class="step-num">{{item.order}}</view>
+        </view>
+        <view class="step-content">
+          <image
+            wx:if="{{item.image}}"
+            class="step-image"
+            src="{{item.image}}"
+            mode="aspectFill"
+          />
+          <text class="step-text">{{item.text}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 营养信息（可选） -->
+  <view class="card nutrition-card" wx:if="{{nutrition}}">
+    <view class="card-title"><text>📊 营养成分（每份）</text></view>
+    <view class="nutri-grid">
+      <view class="nutri-item">
+        <text class="nutri-val">{{nutrition.calories || '-'}}</text>
+        <text class="nutri-unit">kcal</text>
+        <text class="nutri-label">热量</text>
+      </view>
+      <view class="nutri-item">
+        <text class="nutri-val">{{nutrition.protein || '-'}}</text>
+        <text class="nutri-unit">g</text>
+        <text class="nutri-label">蛋白质</text>
+      </view>
+      <view class="nutri-item">
+        <text class="nutri-val">{{nutrition.carbs || '-'}}</text>
+        <text class="nutri-unit">g</text>
+        <text class="nutri-label">碳水</text>
+      </view>
+      <view class="nutri-item">
+        <text class="nutri-val">{{nutrition.fat || '-'}}</text>
+        <text class="nutri-unit">g</text>
+        <text class="nutri-label">脂肪</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar safe-area-bottom">
+    <button class="action-favorite" bindtap="toggleFavorite">
+      <text>{{isFavorited ? '❤️' : '🤍'}} 收藏</text>
+    </button>
+    <!-- 轻量标记：只记录历史，不扣食材 -->
+    <button
+      class="action-record {{isRecorded ? 'action-record--done' : ''}}"
+      catchtap="handleRecordCook"
+      disabled="{{isRecording || isRecorded}}"
+    >
+      <text>{{isRecording ? '⏳ 记录中...' : (isRecorded ? '✅ 已记录' : '📝 标记做过')}}</text>
+    </button>
+    <button
+      class="action-cook {{canCook ? 'action-cook--ready' : ''}}"
+      catchtap="handleConsume"
+    >
+      <text>{{canCook ? '✨ 一键清耗食材' : '⚡ 做好啦'}}</text>
+    </button>
+  </view>
+</view>

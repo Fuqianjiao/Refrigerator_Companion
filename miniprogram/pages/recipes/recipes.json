@@ -1,0 +1,1 @@
+{"usingComponents": {"scene-switcher": "../../components/scene-switcher/scene-switcher", "recipe-card": "../../components/recipe-card/recipe-card", "empty-state": "../../components/empty-state/empty-state"}, "navigationBarTitleText": "🍳 发现菜谱", "enablePullDownRefresh": true}

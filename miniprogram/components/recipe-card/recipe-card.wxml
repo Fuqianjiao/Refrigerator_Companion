@@ -1,0 +1,68 @@
+<!-- components/recipe-card/recipe-card.wxml -->
+<view class="recipe-card" bindtap="onTap">
+  <!-- 封面图区域 -->
+  <view class="recipe-card__cover">
+    <!-- 有图片且未加载失败时显示图片 -->
+    <image
+      wx:if="{{image && !imgError}}"
+      class="recipe-card__image"
+      src="{{image}}"
+      mode="aspectFill"
+      binderror="onImgError"
+    />
+    <!-- 无图片或加载失败时显示灰色占位（不使用 emoji）-->
+    <view wx:else class="recipe-card__placeholder--empty"></view>
+    
+    <!-- 匹配度徽章（分级展示） -->
+    <view class="recipe-card__match-badge {{matchBadgeClass}}">
+      <text class="recipe-card__match-text">{{matchRate}}%匹配</text>
+      <text wx:if="{{_showCookLabel}}" class="recipe-card__cook-label">{{cookLabel}}</text>
+    </view>
+
+    <!-- 难度标签 -->
+    <view class="recipe-card__difficulty">
+      <text>{{difficultyLabel}}</text>
+    </view>
+  </view>
+
+  <!-- 文字信息区 -->
+  <view class="recipe-card__body">
+    <!-- 菜名 -->
+    <text class="recipe-card__name">{{name}}</text>
+
+    <!-- 描述 -->
+    <text class="recipe-card__desc" wx:if="{{description}}">{{description}}</text>
+
+    <!-- 底部元信息栏 -->
+    <view class="recipe-card__footer">
+      <!-- 时间 -->
+      <view class="recipe-card__meta-item">
+        <text class="recipe-card__meta-icon">⏱</text>
+        <text>{{cookTime}}分钟</text>
+      </view>
+
+      <!-- 场景份量 -->
+      <view class="recipe-card__meta-item" wx:if="{{servingLabel}}">
+        <text class="recipe-card__meta-icon">🍽</text>
+        <text>{{servingLabel}}</text>
+      </view>
+
+      <!-- 标签 -->
+      <scroll-view scroll-x class="recipe-card__tags-scroll" wx:if="{{tags && tags.length > 0}}">
+        <view class="recipe-card__tags">
+          <text 
+            class="recipe-card__tag" 
+            wx:for="{{tags}}" 
+            wx:key="index"
+          >#{{item}}</text>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 缺料提示 -->
+    <view class="recipe-card__missing" wx:if="{{missingIngredients.length > 0 && !canCook}}">
+      <text class="recipe-card__missing-icon">🛒</text>
+      <text>还差：{{missingIngredientsText}}</text>
+    </view>
+  </view>
+</view>

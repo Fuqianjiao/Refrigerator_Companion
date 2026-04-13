@@ -1,0 +1,99 @@
+/* ============================================
+   🧊 FridgeMate - 动画系统
+   温馨可爱的微动效
+   ============================================ */
+
+/* === 浮动呼吸（FAB按钮） === */
+@keyframes float-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8rpx); }
+}
+
+/* === 淡入上升（页面进入） === */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up var(--duration-slow) var(--ease-out) both;
+}
+
+/* === 缩放弹入（卡片出现） === */
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in var(--duration-normal) var(--ease-spring) both;
+}
+
+/* === 弹性脉冲（提醒横幅） === */
+@keyframes pulse-gentle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.02); }
+}
+
+.animate-pulse {
+  animation: pulse-gentle 2s ease-in-out infinite;
+}
+
+/* === 摇晃（过期警告） === */
+@keyframes shake-gentle {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4rpx); }
+  40% { transform: translateX(4rpx); }
+  60% { transform: translateX(-3rpx); }
+  80% { transform: translateX(3rpx); }
+}
+
+.animate-shake {
+  animation: shake-gentle 0.5s ease-in-out;
+}
+
+/* === 渐显（通用） === */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fade-in var(--duration-normal) ease-out both;
+}
+
+/* === 列表逐项入场 === */
+.stagger-item {
+  animation: fade-in-up var(--duration-normal) var(--ease-out) both;
+}
+
+.stagger-item:nth-child(1) { animation-delay: 0ms; }
+.stagger-item:nth-child(2) { animation-delay: 60ms; }
+.stagger-item:nth-child(3) { animation-delay: 120ms; }
+.stagger-item:nth-child(4) { animation-delay: 180ms; }
+.stagger-item:nth-child(5) { animation-delay: 240ms; }
+.stagger-item:nth-child(6) { animation-delay: 300ms; }
+.stagger-item:nth-child(7) { animation-delay: 360ms; }
+.stagger-item:nth-child(8) { animation-delay: 420ms; }
+
+/* === 旋转（加载中） === */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
